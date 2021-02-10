@@ -47,12 +47,14 @@ class JulianTime(unittest.TestCase):
         self.assertAlmostEqual(spa_code.JCE(2451544.999349722), -0.000000018, 9, "JCE is about -0.000000018")
         self.assertAlmostEqual(spa_code.JCE(2440587.499627499), -0.30000001, 8, "JCE is about -0.30000001")
         self.assertAlmostEqual(spa_code.JCE(3912880.499290852), 40.00918547, 8, "JCE is about 40.00918547")
+        self.assertAlmostEqual(spa_code.JCE(2438323.153914679), -0.361994417, 9, "JCE is about -0.361994417")
         self.assertAlmostEqual(spa_code.JCE(2456148.499895), 0.126036958, 9, "JCE is about 0.126036958")
         
     def test_JME(self):
         self.assertAlmostEqual(spa_code.JME(-0.000000018), -0.0000000018, 10, "JCE is about -0.0000000018")
         self.assertAlmostEqual(spa_code.JME(-0.30000001), -0.030000001, 9, "JCE is about -0.030000001")
         self.assertAlmostEqual(spa_code.JME(40.00918547), 4.000918547, 9, "JCE is about 4.000918547")
+        self.assertAlmostEqual(spa_code.JME(-0.361994417), -0.0361994417, 10, "JCE is about -0.0361994417")
         self.assertAlmostEqual(spa_code.JME(0.126036958), .0126036958, 10, "JCE is about .0126036958")
  
 if __name__ == '__main__':
