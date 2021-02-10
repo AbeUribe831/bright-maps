@@ -31,7 +31,6 @@ class JulianTime(unittest.TestCase):
         self.assertAlmostEqual(spa_code.JD(unixTimeFromDate(20, 10, 1963, 15, 42, 5)), 2438323.1542245, 4, "Julian day is at about 2438323.1542245")
         self.assertAlmostEqual(spa_code.JD(unixTimeFromDate(9, 8, 2012, 0, 0, 50)), 2456148.50058, 4, "Julian day is at about 2456148.50058")
 
-    #Since we are using epoch we cannot go before Jan 1, 1970. For Bright Maps, this is fine
     def test_JDE(self):
         astTest = astTimeFromDate(1, 1, 2000, 12, 0, 0)
         self.assertAlmostEqual(spa_code.JDE(2451545.0, astTest.unix, astTest.unix_tai), 2451544.999349722, 4, "JDE is about 2451544.9993")
@@ -39,6 +38,8 @@ class JulianTime(unittest.TestCase):
         self.assertAlmostEqual(spa_code.JDE(2440587.5, astTest.unix, astTest.unix_tai), 2440587.499627499, 4, "JDE is about 2440587.4996")
         astTest = astTimeFromDate(31, 12, 6000, 23, 59, 59)
         self.assertAlmostEqual(spa_code.JDE(3912880.4999, astTest.unix, astTest.unix_tai), 3912880.499290852, 3, "JDE is about 3912880.4992")
+        astTest = astTimeFromDate(20, 10, 1963, 15, 42, 5)
+        self.assertAlmostEqual(spa_code.JDE(2438323.1542245, astTest.unix, astTest.unix_tai), 2438323.153914679, 4, "Julian day is at about 2438323.1539")
         astTest = astTimeFromDate(9, 8, 2012, 0, 0, 50)
         self.assertAlmostEqual(spa_code.JDE(2456148.50058, astTest.unix, astTest.unix_tai), 2456148.499895, 4, "JDE is about 2456148.499895")
 
