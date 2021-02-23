@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple Map</title>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+        <!--These two links connects the html to the css and js-->
+        <link rel="stylesheet" type="text/css" href="./style.css"/>
+        <script src="./index.js"></script>
+    </head>
+    <body>
+        <div id="map"></div>
+        
+        <!--- Look up why async script must be after the DOM elements used in callback-->
+        <script
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwEWDv_SpDj6e2-x4SzbP9EaDlmVMWS3E&callback=initMap&libraries=&v=weekly">
+            async
+        </script>
+    </body>
+</html>
