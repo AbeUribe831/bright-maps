@@ -1,1 +1,12 @@
 __pycache__/
+spa_test.py
+spa_code.py
+spa_tables.py
+example_api.py
+backend/bin/
+backend/spa_server/lib/
+backend/spa_server/lib64/
+backend/spa_server/share/
+backend/spa_server/include/
+backend/pyvenv.cfg
+API_Keys.txt
