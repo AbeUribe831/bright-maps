@@ -8,5 +8,6 @@ backend/spa_server/lib/
 backend/spa_server/lib64/
 backend/spa_server/share/
 backend/spa_server/include/
+backend/spa_server/bin/
 backend/pyvenv.cfg
 API_Keys.txt
