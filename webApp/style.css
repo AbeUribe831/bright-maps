@@ -1,3 +1,4 @@
+
 #map {
     height: 100%;
 }
@@ -5,4 +6,74 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+}
+input[type="text"]{
+    font-size: small;
+    border-top-style: none;
+    border-left-style: none;
+    border-right-style: none;
+    border-bottom-style: solid;
+    border-bottom-color: rgb(24, 90, 189);
+    width: 100%;
+}
+#form-container {
+    padding-left: 0.5em;
+}
+#user-input-box {
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    background-color:rgb(183, 193, 196);
+    position: absolute;
+    z-index: 99;
+}
+#directions-parent {
+    display: flex;
+}
+#addresses-wrapper {
+    width: 100%;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+#flip {
+    width: 5em;
+    height: 100%;
+    align-self: center;
+}
+.arrows-wrapper {
+    display: flex;
+    justify-content: center;
+    vertical-align: middle;
+}
+
+.margin-from-top-div {
+    margin-top: 0.5em;
+}
+.vertical-line {
+    background-color: black;
+    width: 2px;
+    height: 20px;
+}
+
+.left-shift {
+    margin-right: 6px;
+}
+.right-shift {
+    margin-left: 6px;
+}
+.arrow {
+    position: absolute;
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    padding: 3px;
+}
+.top {
+    vertical-align: top;
+    transform: rotate(225deg);
+    margin-right: 14px;
+}
+.bottom {
+    transform: rotate(45deg);
+    margin-left: 14px;
+    margin-top: 12px;
 }

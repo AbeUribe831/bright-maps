@@ -5,7 +5,8 @@ let lon = -121.66129198121926;
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         center: {lat: lat, lng: lon},
-        zoom: 8
+        zoom: 8,
+        mapTypeControl: false
     });
 
     const elevator = new google.maps.ElevationService();
@@ -27,7 +28,9 @@ function initMap() {
                     let time = currentDateObj.getUTCHours().toString() + ':' + currentDateObj.getUTCMinutes().toString() + ':' + currentDateObj.getUTCSeconds().toString();
                     //TODO:: modify call to get sun position instead
                     let spa_url = 'http://localhost:3000/spa/' + date + '/' + time + '/' + lat.toString() + '/' + lon.toString() + '/' + results[0].elevation.toString();
+                    console.log('url ' + spa_url );
                     let spaHttp = new XMLHttpRequest();
+                    //TODO:: rewrite with promise
                     spaHttp.open("Get", spa_url, false);
                     spaHttp.send();
                     console.log("response of weather: " + spaHttp.responseText);

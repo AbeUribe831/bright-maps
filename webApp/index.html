@@ -9,11 +9,28 @@
     </head>
     <body>
         <div id="map"></div>
-        
+        <div id="user-input-box">
+            <form id="form-container">
+                <div id="directions-parent">
+                    <div id="addresses-wrapper">
+                        <input type="text" id="from" name="from"><br>
+                        <input type="text" class="margin-from-top-div" id="to" name="to">
+                    </div>
+                    <div id="flip" alt="flip to and from addresses">
+                        <div class="arrows-wrapper">
+                            <div class="vertical-line left-shift"></div>
+                            <div class="arrow top"></div>
+                            <div class="vertical-line right-shift"></div>
+                            <div class="arrow bottom"></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
         <!--- Look up why async script must be after the DOM elements used in callback-->
         <script
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwEWDv_SpDj6e2-x4SzbP9EaDlmVMWS3E&callback=initMap&libraries=&v=weekly">
-            async
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwEWDv_SpDj6e2-x4SzbP9EaDlmVMWS3E&callback=initMap&libraries=&v=weekly"
+            async>
         </script>
     </body>
 </html>
