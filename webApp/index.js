@@ -49,3 +49,26 @@ function initMap() {
         
     });
 }
+
+function flipHoverOn() {
+    var verticalLineClass = document.getElementsByClassName('vertical-line');
+    var arrowClass = document.getElementsByClassName('arrow');
+    for(let i = 0; i < verticalLineClass.length; i++){
+        verticalLineClass[i].style.background = '#3770ff';
+    }
+    for(let i = 0; i < arrowClass.length; i++){
+        arrowClass[i].style.border = 'solid #3770ff';
+        arrowClass[i].style.borderWidth = '0 2px 2px 0';
+    }
+}
+function flipHoverOff() {
+    var verticalLineClass = document.getElementsByClassName('vertical-line');
+    var arrowClass = document.getElementsByClassName('arrow');
+    for(let i = 0; i < verticalLineClass.length; i++){
+        verticalLineClass[i].style.background = 'black';
+    }
+    for(let i = 0; i < arrowClass.length; i++){
+        arrowClass[i].style.border = 'solid black';
+        arrowClass[i].style.borderWidth = '0 2px 2px 0';
+    }
+}

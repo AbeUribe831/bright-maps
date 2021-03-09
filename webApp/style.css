@@ -7,17 +7,29 @@ html, body {
     margin: 0;
     padding: 0;
 }
-input[type="text"]{
-    font-size: small;
+input[type="text"] {
     border-top-style: none;
     border-left-style: none;
     border-right-style: none;
-    border-bottom-style: solid;
     border-bottom-color: rgb(24, 90, 189);
-    width: 100%;
+    align-self: center;
+}
+input[type="number"] {
+    font-size: 0.8em;
+    text-align: center;
+    align-self: center;
+    appearance: textfield;
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    height: 1.5em;
+    padding: 0%;
+}
+/* increase scale to 1 after 360 horizontal pixels */
+input[type="checkbox"] {
+    transform: scale(0.8);
 }
 #form-container {
-    padding-left: 0.5em;
+    padding-left: 0.3em;
 }
 #user-input-box {
     top: 0%;
@@ -36,14 +48,42 @@ input[type="text"]{
     margin-bottom: 0.5em;
 }
 #flip {
-    width: 4.5em;
+    width: 3em;
     height: 100%;
     align-self: center;
+}
+#additional-options-wrapper {
+    display: flex;
+    height: 1.5em;
+    background-color:rgb(183, 193, 196);
+}
+#there-are-back-text {
+    padding-right: 0.5em;
+}
+#am-pm {
+    font-size: 0.6em;
+    border-style: none;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    border-radius: 10%;
+    height: 2em;
+    width: 2.2em;
+}
+#times-input-wrapper {
+    display: flex;
+}
+#going-back-at-wrapper {
+    margin-left: 1em;
+}
+.address-dimensions {
+    height: 1em;
+    width: 100%;
+    border-radius: 3%;
 }
 .arrows-wrapper {
     display: flex;
     justify-content: center;
-    vertical-align: middle;
 }
 
 .margin-from-top-div {
@@ -52,14 +92,14 @@ input[type="text"]{
 .vertical-line {
     background-color: black;
     width: 2px;
-    height: 20px;
+    height: 15px;
 }
 
 .left-shift {
-    margin-right: 6px;
+    margin-right: 5px;
 }
 .right-shift {
-    margin-left: 6px;
+    margin-left: 5px;
 }
 .arrow {
     position: absolute;
@@ -70,10 +110,81 @@ input[type="text"]{
 .top {
     vertical-align: top;
     transform: rotate(225deg);
-    margin-right: 14px;
+    margin-right: 13px;
 }
 .bottom {
     transform: rotate(45deg);
-    margin-left: 14px;
-    margin-top: 12px;
+    margin-left: 12px;
+    margin-top: 8px;
 }
+.checkbox-padding {
+    padding-right: 0.3em;
+}
+/* increase font-size to small after 360px horizontal width */
+.text-with-border {
+    font-size: 11px;
+    align-self: center;
+}
+.text-underline {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-size: 0.85em;
+    text-decoration: underline;
+}
+.text-time {
+    font-size: 11px;
+    text-align: center;
+}
+.time-wrapper {
+    display: flex;
+}
+.time-block-wrapper {
+    display:grid;
+}
+.colon {
+    margin: 0px 2px;
+ }
+ .am-pm-margin {
+     margin-left: 0.5em;
+ }
+ .am-pm-input-text {
+    font-size: 0.6em;
+    text-align: center;
+    align-self: center;
+    border-bottom-style: none;
+    border-radius: 5%;
+    height: 1.8em;
+    width: 2em;
+ }
+ .time-border {
+    border: none;
+    border-radius: 10%;
+ }
+ .date-border {
+    background-color: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 0%;
+    border-bottom: 1px solid black;
+ }
+ .date-padding {
+    padding-left: 0.4em;
+ }
+ .month-input {
+     width: 1.7em;
+ }
+ .two-digit-input {
+    width: 1.5em;
+ }
+ .year-input {
+    width: 2.5em;
+ }
+ @media (min-width: 532px) and (max-width: 727px) {
+     .top{
+        margin-right: 12px;
+     }
+     .bottom{
+         margin-left: 12px;
+     }
+ }
