@@ -1,4 +1,4 @@
-
+/* TODO:: add styling to settings buttons */
 #map {
     height: 100%;
 }
@@ -11,8 +11,11 @@ input[type="text"] {
     border-top-style: none;
     border-left-style: none;
     border-right-style: none;
-    border-bottom-color: rgb(24, 90, 189);
+    border-bottom-style: none;
     align-self: center;
+}
+input[type="text"]:focus {
+    outline-color: rgb(24, 90, 189);
 }
 input[type="number"] {
     font-size: 0.8em;
@@ -27,6 +30,19 @@ input[type="number"] {
 /* increase scale to 1 after 360 horizontal pixels */
 input[type="checkbox"] {
     transform: scale(0.8);
+}
+input[type="checkbox"]:hover {
+    cursor: pointer;
+}
+button[type="button"]:focus {
+    text-decoration: none;
+    outline: none;
+}
+button[type="button"]:hover {
+    cursor: pointer;
+}
+select:hover {
+    cursor: pointer;
 }
 #form-container {
     padding-left: 0.3em;
@@ -51,6 +67,12 @@ input[type="checkbox"] {
     width: 3em;
     height: 100%;
     align-self: center;
+}
+#flip:focus {
+    outline:auto;
+}
+#flip:hover {
+    cursor:pointer;
 }
 #additional-options-wrapper {
     display: flex;
@@ -135,7 +157,7 @@ input[type="checkbox"] {
     font-size: 11px;
     text-align: center;
 }
-.time-wrapper {
+.flex-wrapper {
     display: flex;
 }
 .time-block-wrapper {
@@ -143,6 +165,10 @@ input[type="checkbox"] {
 }
 .colon {
     margin: 0px 2px;
+ }
+ .backslash {
+     margin-left: 3px;
+     margin-top: 3px;
  }
  .am-pm-margin {
      margin-left: 0.5em;
@@ -156,20 +182,12 @@ input[type="checkbox"] {
     height: 1.8em;
     width: 2em;
  }
- .time-border {
+ .time-date-border {
     border: none;
     border-radius: 10%;
  }
- .date-border {
-    background-color: transparent;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    border-radius: 0%;
-    border-bottom: 1px solid black;
- }
  .date-padding {
-    padding-left: 0.4em;
+    padding-left: 0.2em;
  }
  .month-input {
      width: 1.7em;
