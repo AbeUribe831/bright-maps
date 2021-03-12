@@ -13,8 +13,8 @@
             <form id="form-container">
                 <div id="directions-parent">
                     <div id="addresses-wrapper">
-                        <input type="text" tabindex="1" id="from" class="address-dimensions" name="from"><br>
-                        <input type="text" tabindex="2" class="margin-from-top-div address-dimensions" id="to" name="to">
+                        <input type="text" tabindex="1" id="from" class="address-dimensions" name="from" autocomplete="street-address"><br>
+                        <input type="text" tabindex="2" class="margin-from-top-div address-dimensions" id="to" name="to" autocomplete="street-address">
                     </div>
                     <div id="flip" tabindex="3" alt="flip to and from addresses" onmouseover="flipHoverOn()" onmouseout="flipHoverOff()">
                         <div class="arrows-wrapper">
@@ -26,13 +26,13 @@
                     </div>
                 </div>
                 <div id="additional-options-wrapper">
-                    <input type="checkbox" tabindex="4" id="current-time-checkbox" name="current-time">
+                    <input type="checkbox" tabindex="4" id="current-time-checkbox" name="current-time" checked>
                     <label for="current-time-checkbox" class="text-with-border">Now</label>
                     <input type="checkbox" tabindex="5" id="there-and-back-checkbox" name="there-and-back-checkbox">
                     <label for="there-and-back-checkbox" class="text-with-border">There & Back</label>
                 </div>
                 <div id="times-input-wrapper">
-                    <div id="going-there-at-wrapper">
+                    <div id="going-there-at-wrapper" hidden>
                         <p class="text-underline">Going There At</p>
                         <div class="flex-wrapper">
                             <div class="time-block-wrapper">
@@ -45,7 +45,7 @@
                                 <label for="minute-going-there" class="text-time">Min</label>
                             </div>
                             <div class="time-block-wrapper am-pm-margin">
-                                <select name="am-pm" tabindex="8" id="am-pm">
+                                <select name="going-there-am-pm" tabindex="8" id="going-there-am-pm" class="am-pm">
                                     <option value="AM">AM</option>
                                     <option value="PM">PM</option>
                                 </select>
@@ -68,7 +68,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="going-back-at-wrapper">
+                    <div id="going-back-at-wrapper" hidden>
                         <p class="text-underline">Going Back At</p>
                         <div class="flex-wrapper">
                             <div class="time-block-wrapper">
@@ -81,7 +81,7 @@
                                 <label for="minute-going-back" class="text-time">Min</label>
                             </div>
                             <div class="time-block-wrapper am-pm-margin">
-                                <select name="am-pm" tabindex="14" id="am-pm">
+                                <select name="going-back-am-pm" tabindex="14" id="going-back-am-pm" class="am-pm">
                                     <option value="AM">AM</option>
                                     <option value="PM">PM</option>
                                 </select>

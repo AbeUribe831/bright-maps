@@ -139,4 +139,10 @@ document.getElementById("day-going-there").addEventListener("focusout", relevant
 document.getElementById("day-going-back").addEventListener("keyup", relevantDayEvent);
 document.getElementById("day-going-back").addEventListener("focusout", relevantDayEvent);
 
+document.getElementById("current-time-checkbox").addEventListener("click", (tEvent)=>{
+    document.getElementById("going-there-at-wrapper").hidden = !document.getElementById("going-there-at-wrapper").hidden;
+});
 
+document.getElementById("there-and-back-checkbox").addEventListener("click", (tEvent)=>{
+    document.getElementById("going-back-at-wrapper").hidden = !document.getElementById("going-back-at-wrapper").hidden;
+});

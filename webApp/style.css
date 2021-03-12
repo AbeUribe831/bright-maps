@@ -51,7 +51,7 @@ select:hover {
     top: 0%;
     left: 0%;
     width: 100%;
-    background-color:rgb(183, 193, 196);
+    background-color:rgb(207, 215, 218);
     position: absolute;
     z-index: 99;
 }
@@ -77,12 +77,12 @@ select:hover {
 #additional-options-wrapper {
     display: flex;
     height: 1.5em;
-    background-color:rgb(183, 193, 196);
+    background-color:rgb(207, 215, 218);
 }
 #there-are-back-text {
     padding-right: 0.5em;
 }
-#am-pm {
+.am-pm {
     font-size: 0.6em;
     border-style: none;
     appearance: none;
@@ -95,8 +95,8 @@ select:hover {
 #times-input-wrapper {
     display: flex;
 }
-#going-back-at-wrapper {
-    margin-left: 1em;
+#going-there-at-wrapper {
+    margin-right: 1em;
 }
 .address-dimensions {
     height: 1em;
@@ -198,7 +198,15 @@ select:hover {
  .year-input {
     width: 2.5em;
  }
- @media (min-width: 532px) and (max-width: 727px) {
+@media (min-width: 560px) {
+    #user-input-box {
+        width: 360px;
+        margin-top: 5px;
+        margin-left: 5px;
+        border-radius: 5%;
+    }
+}
+@media (min-width: 532px) and (max-width: 727px) {
      .top{
         margin-right: 12px;
      }
@@ -206,3 +214,8 @@ select:hover {
          margin-left: 12px;
      }
  }
+@media(min-width: 728px) {
+    .top{
+        margin-right: 11px;
+    }
+}
