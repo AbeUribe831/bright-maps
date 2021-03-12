@@ -2,6 +2,8 @@
 let map;
 let lat = 36.67998425155742;
 let lon = -121.66129198121926;
+let fromAutocomplete;
+let toAutocomplete;
 
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
@@ -9,7 +11,18 @@ function initMap() {
         zoom: 8,
         mapTypeControl: false
     });
-
+    fromAutocomplete = new google.maps.places.Autocomplete(document.getElementById("from"),
+    {
+        componentRestrictions: {'country' : ['us']},
+        fields: ['geometry', 'name', 'adr_address', 'place_id'],
+        types: ['geocode', 'establishment'],
+    });
+    toAutocomplete = new google.maps.places.Autocomplete(document.getElementById("to"),
+    {
+        componentRestrictions: {'country' : ['us']},
+        fields: ['geometry', 'name', 'adr_address', 'place_id'],
+        types: ['geocode', 'establishment'],
+    });
     const elevator = new google.maps.ElevationService();
     //const infowindow = new google.maps.InfoWindow({});
     map.addListener("click", (clickEvent) =>{
@@ -31,10 +44,12 @@ function initMap() {
                     let spa_url = 'http://localhost:3000/spa/' + date + '/' + time + '/' + lat.toString() + '/' + lon.toString() + '/' + results[0].elevation.toString();
                     console.log('url ' + spa_url );
                     let spaHttp = new XMLHttpRequest();
-                    //TODO:: rewrite with promise
-                    spaHttp.open("Get", spa_url, false);
+                    //TODO:: rewrite with promise, third param false for synchronous 
+                    spaHttp.open("Get", spa_url);
                     spaHttp.send();
-                    console.log("response of weather: " + spaHttp.responseText);
+                    //TODO:: Add function for spaHttp readyState = 4 to process results
+                    
+                    //console.log("response of weather: " + spaHttp.responseText);
                     
                     //url = 'localhost:4000/spa/' + date + '/' + time + '/' + lat + '/' + lon + '/' + results[0].elevation + 
                 }
@@ -48,6 +63,22 @@ function initMap() {
             
         );
         
+    });
+    fromAutocomplete.addListener("place_changed", ()=>{
+        let place = fromAutocomplete.getPlace();
+        // user did not click on a place
+        console.log(place);
+        if(place.geometry){
+            document.getElementById("from").innerHTML = place.name;
+        }
+    });
+    toAutocomplete.addListener("place_changed", ()=>{
+        let place = toAutocomplete.getPlace();
+        // user did not click on a place
+        console.log('place 2 ' + place);
+        if(place.geometry){
+            document.getElementById("to").innerHTML = place.name;
+        }
     });
 }
 function getValueWithZero(idName, value){
