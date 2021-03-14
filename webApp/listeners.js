@@ -13,17 +13,19 @@ let monthMaxDays = {
     12: 31
 };
 // function that contains the logic for keeping time fields (hour/minute) in range
-function _relevantTime(timeEl, max){
+function _relevantTime(timeEl, min, max){
     // Case when input is a number
     if(!isNaN(timeEl.valueAsNumber)){
         let elValue = timeEl.valueAsNumber;
-        elValue = elValue < 1 ? 1 : elValue;
+        elValue = elValue < min ? min : elValue;
         elValue = elValue > max ? max : elValue;
-        document.getElementById(timeEl.id).value = elValue < 10 ? '0' + elValue : elValue;
+        //document.getElementById(timeEl.id).value = elValue < 10 ? '0' + elValue : elValue;
+        timeEl.value =  elValue < 10 ? '0' + elValue : elValue;
     }
     // Default to 01 when not a number 
     else{
-        document.getElementById(timeEl.id).value = "01";
+        //document.getElementById(timeEl.id).value = "01";
+        timeEl.value = min < 10 ? '0' + min : min;
     }
 }
 
@@ -32,20 +34,20 @@ function _relevantTime(timeEl, max){
 // TODO:: adjust the max for either 12 or 24 our time
 function relevantHourEvent(tEvent){
     if(tEvent.type.includes("focusout") || tEvent.key.includes("Enter")){
-        _relevantTime(tEvent.target, 12);
+        _relevantTime(tEvent.target, 1, 12);
     }
 }
 
-// callback function for keyboard events to keep minute in range (01-59)
+// callback function for keyboard events to keep minute in range (00-59)
 function relevantMinEvent(tEvent){
     if(tEvent.type.includes("focusout") || tEvent.key.includes("Enter")){
-        _relevantTime(tEvent.target, 59);
+        _relevantTime(tEvent.target, 0, 59);
     }
 }
 // TODO:: Consider making default month 01 or current
 function relevantMonthEvent(tEvent){
     if(tEvent.type.includes("focusout") || tEvent.key.includes("Enter")){
-        _relevantTime(tEvent.target, 12);
+        _relevantTime(tEvent.target, 1, 12);
     }
 }
 // TODO:: Consider making default day 01 or current
@@ -64,10 +66,12 @@ function relevantDayEvent(tEvent) {
             // override day value if greater than it's month's max day or add a '0' in front when day < 10
             if(monthVal != 2){
                 if(dayEl.valueAsNumber > monthMaxDays[monthVal]){
-                    document.getElementById(dayEl.id).value = monthMaxDays[monthVal]
+                    // document.getElementById(dayEl.id).value = monthMaxDays[monthVal]
+                    dayEl.value = monthMaxDays[monthVal];
                 } 
                 else if(dayEl.valueAsNumber < 10){
-                    document.getElementById(dayEl.id).value = dayEl.valueAsNumber < 10 ? '0' + dayEl.valueAsNumber : dayEl.valueAsNumber;
+                    // document.getElementById(dayEl.id).value = dayEl.valueAsNumber < 10 ? '0' + dayEl.valueAsNumber : dayEl.valueAsNumber;
+                    dayEl.value = dayEl.valueAsNumber < 10 ? '0' + dayEl.valueAsNumber : dayEl.valueAsNumber;
                 }
             }
             // February get cooresponding year element to find correct max day
@@ -79,14 +83,17 @@ function relevantDayEvent(tEvent) {
                 }
                 let maxDay = parseInt(yearVal) % 4 == 0 ? 29 : 28;
                 if(dayEl.valueAsNumber > maxDay)
-                    document.getElementById(dayEl.id).value = maxDay;
+                    // document.getElementById(dayEl.id).value = maxDay;
+                    dayEl.value = maxDay;
                 else
-                    document.getElementById(dayEl.id).value = dayEl.valueAsNumber < 10 ? '0' + dayEl.valueAsNumber : dayEl.valueAsNumber;
+                    // document.getElementById(dayEl.id).value = dayEl.valueAsNumber < 10 ? '0' + dayEl.valueAsNumber : dayEl.valueAsNumber;
+                    dayEl.value = dayEl.valueAsNumber < 10 ? '0' + dayEl.valueAsNumber : dayEl.valueAsNumber;
             }
         }
         // Default day
         else{
-            document.getElementById(dayEl.id).value = '01';
+            // document.getElementById(dayEl.id).value = '01';
+            dayEl.value = '01';
         }
     }
 }
@@ -103,11 +110,13 @@ function relevantYearEvent(tEvent){
             else
                 while(elValueString.length < 5)
                     elValueString = elValueString[0] + '0' + elValueString.substring(1, elValueString.length);
-            document.getElementById(timeEl.id).value = elValueString;
+            // document.getElementById(timeEl.id).value = elValueString;
+            timeEl.value = elValueString;
         }
         // default current year of not valid
         else{
-            document.getElementById(timeEl.id).valueAsNumber = new Date().getFullYear();
+            // document.getElementById(timeEl.id).valueAsNumber = new Date().getFullYear();
+            timeEl.valueAsNumber = new Date().getFullYear();
         }
     }
 }
