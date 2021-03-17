@@ -121,6 +121,28 @@ function relevantYearEvent(tEvent){
     }
 }
 
+function getRoute(tEvent){
+    if(tEvent.type.includes("focusout") || tEvent.key.includes("Enter")){
+        // if checked then use current time
+        if(document.getElementById("current-time-checkbox").checked == true)
+            calcRoute(new Date());
+        // use time in checkbox
+        else {
+            let year = parseInt(document.getElementById("year-going-there").value);
+            let month = parseInt(document.getElementById("month-going-there").value);
+            let day = parseInt(document.getElementById("day-going-there").value);
+            let hour = parseInt(document.getElementById("hour-going-there").value) % 12;
+            let minute = parseInt(document.getElementById("minute-going-there").value);
+            // AM or PM string
+            let am_pm = document.getElementById("going-there-am-pm").value;
+            if(am_pm.includes("PM")){
+                minute += 12;
+            }
+            calcRoute(year, month, day, hour, minute);
+        }
+    }
+}
+
 // hour and minute listeners for focus out and clicking enter
 // keeps input within range and defaults invalid times to 01 min or hour
 document.getElementById("hour-going-there").addEventListener("keyup", relevantHourEvent);
@@ -147,6 +169,13 @@ document.getElementById("day-going-there").addEventListener("keyup", relevantDay
 document.getElementById("day-going-there").addEventListener("focusout", relevantDayEvent);
 document.getElementById("day-going-back").addEventListener("keyup", relevantDayEvent);
 document.getElementById("day-going-back").addEventListener("focusout", relevantDayEvent);
+
+document.getElementById("from").addEventListener("keyup", getRoute);
+document.getElementById("from").addEventListener("focusout", getRoute);
+
+
+document.getElementById("to").addEventListener("keyup", getRoute);
+document.getElementById("to").addEventListener("focusout", getRoute);
 
 document.getElementById("current-time-checkbox").addEventListener("click", (tEvent)=>{
     document.getElementById("going-there-at-wrapper").hidden = !document.getElementById("going-there-at-wrapper").hidden;
