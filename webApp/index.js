@@ -46,7 +46,6 @@ function initMap() {
             },
             (results, status) => {
                 if(status == "OK" && results){
-                    console.log('lat: ' + lat + ' lon: ' + lon + ' elevation: ' + results[0].elevation + 'm');
                     let currentDateObj = new Date(Date.now());
                     let date = currentDateObj.getUTCFullYear().toString() + '-' + currentDateObj.getUTCMonth().toString() + '-' + currentDateObj.getUTCDate().toString(); 
                     let time = currentDateObj.getUTCHours().toString() + ':' + currentDateObj.getUTCMinutes().toString() + ':' + currentDateObj.getUTCSeconds().toString();
@@ -105,7 +104,6 @@ function calcRoute(departDate) {
         };
         directionsService.route(request, (result, status) => {
             if(status == 'OK'){
-                console.log(result);
                 directionsRenderer.setDirections(result);
                 // if the status is okay then clear the markers and add new ones to the map
                 // TODO:: adjust to multiple routes once implemented

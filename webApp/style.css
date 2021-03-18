@@ -101,6 +101,7 @@ select:hover {
 .address-dimensions {
     height: 1em;
     width: 100%;
+    box-sizing: border-box;
     border-radius: 3%;
 }
 .arrows-wrapper {
