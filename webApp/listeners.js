@@ -6,6 +6,13 @@ class PrevTime {
         this.pHour = pHour;
         this.pMin = pMin
     }
+    setTime(year, month, day, hour, min){
+        this.pYear = year;
+        this.pMonth = month;
+        this.pDay = day;
+        this.pHour = hour;
+        this.pMin = min;
+    }
 }
 let pGoingThere = new PrevTime();
 // Februaru (2) is not included because of leap year
@@ -172,12 +179,13 @@ function getRoute(){
 function getRouteEvent(tEvent){
     if(tEvent.type.includes("focusout") || tEvent.key.includes("Enter")){
         getRoute();
-        pGoingThere.pYear = document.getElementById("year-going-there").valueAsNumber;
-        pGoingThere.pMonth = document.getElementById("month-going-there").valueAsNumber;
-        pGoingThere.pDay = document.getElementById("day-going-there").valueAsNumber;
-        pGoingThere.pHour = document.getElementById("hour-going-there").valueAsNumber;
-        pGoingThere.pMin = document.getElementById("minute-going-there").valueAsNumber;
-        
+        pGoingThere.setTime(
+            document.getElementById("year-going-there").valueAsNumber,
+            document.getElementById("month-going-there").valueAsNumber,
+            document.getElementById("day-going-there").valueAsNumber,
+            document.getElementById("hour-going-there").valueAsNumber,
+            document.getElementById("minute-going-there").valueAsNumber
+        );
     }
 }
 
