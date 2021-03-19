@@ -1,3 +1,13 @@
+class PrevTime {
+    constructor(pYear=0, pMonth=0, pDay=0, pHour=0, pMin=0){
+        this.pYear = pYear;
+        this.pMonth = pMonth;
+        this.pDay = pDay;
+        this.pHour = pHour;
+        this.pMin = pMin
+    }
+}
+let pGoingThere = new PrevTime();
 // Februaru (2) is not included because of leap year
 let monthMaxDays = {
     1: 31,
@@ -27,7 +37,6 @@ function _relevantTime(timeEl, min, max){
         //document.getElementById(timeEl.id).value = "01";
         timeEl.value = min < 10 ? '0' + min : min;
     }
-    getRoute();
 }
 
 
@@ -36,6 +45,10 @@ function _relevantTime(timeEl, min, max){
 function relevantHourEvent(tEvent){
     if(tEvent.type.includes("focusout") || tEvent.key.includes("Enter")){
         _relevantTime(tEvent.target, 1, 12);
+        if(pGoingThere.pHour != tEvent.target.valueAsNumber){
+            pGoingThere.pHour = tEvent.target.valueAsNumber;
+            getRoute();
+        }
     }
 }
 
@@ -43,12 +56,20 @@ function relevantHourEvent(tEvent){
 function relevantMinEvent(tEvent){
     if(tEvent.type.includes("focusout") || tEvent.key.includes("Enter")){
         _relevantTime(tEvent.target, 0, 59);
+        if(pGoingThere.pMin != tEvent.target.valueAsNumber){
+            pGoingThere.pMin = tEvent.target.valueAsNumber;
+            getRoute();
+        }
     }
 }
 // TODO:: Consider making default month 01 or current
 function relevantMonthEvent(tEvent){
     if(tEvent.type.includes("focusout") || tEvent.key.includes("Enter")){
         _relevantTime(tEvent.target, 1, 12);
+        if(pGoingThere.pMonth != tEvent.target.valueAsNumber){
+            pGoingThere.pMonth = tEvent.target.valueAsNumber;
+            getRoute();
+        }
     }
 }
 // TODO:: Consider making default day 01 or current
@@ -95,7 +116,10 @@ function relevantDayEvent(tEvent) {
             // document.getElementById(dayEl.id).value = '01';
             dayEl.value = '01';
         }
-        getRoute();
+        if(pGoingThere.pDay != tEvent.target.valueAsNumber){
+            pGoingThere.pDay = tEvent.target.valueAsNumber;
+            getRoute();
+        }
     }
 }
 function relevantYearEvent(tEvent){
@@ -118,7 +142,10 @@ function relevantYearEvent(tEvent){
             // document.getElementById(timeEl.id).valueAsNumber = new Date().getFullYear();
             timeEl.valueAsNumber = new Date().getFullYear();
         }
-        getRoute();
+        if(pGoingThere.pYear != tEvent.target.valueAsNumber){
+            pGoingThere.pYear = tEvent.target.valueAsNumber;
+            getRoute();
+        }
     }
 }
 function getRoute(){
@@ -133,21 +160,24 @@ function getRoute(){
         let day = parseInt(document.getElementById("day-going-there").value);
         let hour = parseInt(document.getElementById("hour-going-there").value) % 12;
         let minute = parseInt(document.getElementById("minute-going-there").value);
-        console.log("minute " + minute);
         // AM or PM string
         let am_pm = document.getElementById("going-there-am-pm").value;
-        console.log("am-pm: " + am_pm);
         if(am_pm.includes("PM")){
             hour += 12;
             hour = Math.min(23, hour);
         }
-        console.log("year: " + year + " month: " + month + " day:" + day + " hour: " + hour + " minute: " + minute);
         calcRoute(new Date(year=year, month=month, day=day, hours=hour, minutes=minute));
     }
 }
 function getRouteEvent(tEvent){
     if(tEvent.type.includes("focusout") || tEvent.key.includes("Enter")){
         getRoute();
+        pGoingThere.pYear = document.getElementById("year-going-there").valueAsNumber;
+        pGoingThere.pMonth = document.getElementById("month-going-there").valueAsNumber;
+        pGoingThere.pDay = document.getElementById("day-going-there").valueAsNumber;
+        pGoingThere.pHour = document.getElementById("hour-going-there").valueAsNumber;
+        pGoingThere.pMin = document.getElementById("minute-going-there").valueAsNumber;
+        
     }
 }
 

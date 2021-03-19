@@ -93,8 +93,7 @@ function calcRoute(departDate) {
     let start = document.getElementById('from').value;
     let end = document.getElementById('to').value;
     let nowCheckbox = document.getElementById('current-time-checkbox');
-    // Only run route if the data in from or to is changed
-    /* UNCOMMENT CODE ONCE DEBUGING IS DONE (with calling calcRoute for different times)
+
     if((start != "" && end != "") && (start != prev_from || end != prev_to || (nowCheckbox.checked == false && prev_gtd != departDate.getTime()))){
         let request = {
             origin: start,
@@ -127,7 +126,6 @@ function calcRoute(departDate) {
     prev_from = start;
     prev_to = end;
     prev_gtd = departDate.getTime();
-    */
 }
 function getValueWithZero(value){
     return value < 10 ? '0' + value : value;
