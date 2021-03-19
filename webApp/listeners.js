@@ -27,6 +27,7 @@ function _relevantTime(timeEl, min, max){
         //document.getElementById(timeEl.id).value = "01";
         timeEl.value = min < 10 ? '0' + min : min;
     }
+    getRoute();
 }
 
 
@@ -94,6 +95,7 @@ function relevantDayEvent(tEvent) {
             // document.getElementById(dayEl.id).value = '01';
             dayEl.value = '01';
         }
+        getRoute();
     }
 }
 function relevantYearEvent(tEvent){
@@ -116,12 +118,14 @@ function relevantYearEvent(tEvent){
             // document.getElementById(timeEl.id).valueAsNumber = new Date().getFullYear();
             timeEl.valueAsNumber = new Date().getFullYear();
         }
+        getRoute();
     }
 }
 function getRoute(){
     // if checked then use current time
-    if(document.getElementById("current-time-checkbox").checked == true)
-    calcRoute(new Date());
+    if(document.getElementById("current-time-checkbox").checked == true){
+        calcRoute(new Date());
+    }
     // use time in checkbox
     else {
         let year = parseInt(document.getElementById("year-going-there").value);
@@ -129,12 +133,16 @@ function getRoute(){
         let day = parseInt(document.getElementById("day-going-there").value);
         let hour = parseInt(document.getElementById("hour-going-there").value) % 12;
         let minute = parseInt(document.getElementById("minute-going-there").value);
+        console.log("minute " + minute);
         // AM or PM string
         let am_pm = document.getElementById("going-there-am-pm").value;
+        console.log("am-pm: " + am_pm);
         if(am_pm.includes("PM")){
-            minute += 12;
+            hour += 12;
+            hour = Math.min(23, hour);
         }
-        calcRoute(year, month, day, hour, minute);
+        console.log("year: " + year + " month: " + month + " day:" + day + " hour: " + hour + " minute: " + minute);
+        calcRoute(new Date(year=year, month=month, day=day, hours=hour, minutes=minute));
     }
 }
 function getRouteEvent(tEvent){
@@ -190,4 +198,8 @@ document.getElementById("current-time-checkbox").addEventListener("click", (tEve
 
 document.getElementById("there-and-back-checkbox").addEventListener("click", (tEvent)=>{
     document.getElementById("going-back-at-wrapper").hidden = !document.getElementById("going-back-at-wrapper").hidden;
+});
+
+document.getElementById("going-there-am-pm").addEventListener("change", (event) =>{
+    getRoute();
 });

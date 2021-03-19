@@ -89,10 +89,12 @@ function initMap() {
     });
 }
 function calcRoute(departDate) {
+    console.log(departDate);
     let start = document.getElementById('from').value;
     let end = document.getElementById('to').value;
     let nowCheckbox = document.getElementById('current-time-checkbox');
     // Only run route if the data in from or to is changed
+    /* UNCOMMENT CODE ONCE DEBUGING IS DONE (with calling calcRoute for different times)
     if((start != "" && end != "") && (start != prev_from || end != prev_to || (nowCheckbox.checked == false && prev_gtd != departDate.getTime()))){
         let request = {
             origin: start,
@@ -125,27 +127,28 @@ function calcRoute(departDate) {
     prev_from = start;
     prev_to = end;
     prev_gtd = departDate.getTime();
+    */
 }
-function getValueWithZero(idName, value){
+function getValueWithZero(value){
     return value < 10 ? '0' + value : value;
 }
 function setDefaultTime(){
     let now = new Date();
     // set times for "Going There At"
-    document.getElementById("hour-going-there").value = getValueWithZero("hour-going-there", now.getHours() % 12);
-    document.getElementById("minute-going-there").value = getValueWithZero("minute-going-there", now.getMinutes());    
+    document.getElementById("hour-going-there").value = getValueWithZero(Math.max(now.getHours(), 1) % 12);
+    document.getElementById("minute-going-there").value = getValueWithZero(now.getMinutes());    
     document.getElementById("going-there-am-pm").value = now.getHours() > 12 ? "PM" : "AM";
-    document.getElementById("month-going-there").value = getValueWithZero("month-going-there", now.getMonth() + 1); 
-    document.getElementById("day-going-there").value = getValueWithZero("day-going-there", now.getDate());
+    document.getElementById("month-going-there").value = getValueWithZero(now.getMonth() + 1); 
+    document.getElementById("day-going-there").value = getValueWithZero(now.getDate());
     document.getElementById("year-going-there").value = now.getFullYear();
 
     now.setMinutes(now.getMinutes() + 60);
 
-    document.getElementById("hour-going-back").value = getValueWithZero("hour-going-back", now.getHours() % 12);
-    document.getElementById("minute-going-back").value = getValueWithZero("minute-going-back", now.getMinutes());    
+    document.getElementById("hour-going-back").value = getValueWithZero(Math.max(now.getHours(), 1) % 12);
+    document.getElementById("minute-going-back").value = getValueWithZero(now.getMinutes());    
     document.getElementById("going-back-am-pm").value = now.getHours() > 12 ? "PM" : "AM";
-    document.getElementById("month-going-back").value = getValueWithZero("month-going-back", now.getMonth() + 1); 
-    document.getElementById("day-going-back").value = getValueWithZero("day-going-back", now.getDate());
+    document.getElementById("month-going-back").value = getValueWithZero(now.getMonth() + 1); 
+    document.getElementById("day-going-back").value = getValueWithZero(now.getDate());
     document.getElementById("year-going-back").value = now.getFullYear();
     
 
