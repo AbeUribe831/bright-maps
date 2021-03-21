@@ -10,6 +10,7 @@ let prev_from = "";
 let prev_to = "";
 let prev_gtd = 0;
 let sunMarkers = [];
+let elevator;
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         center: {lat: lat, lng: lon},
@@ -33,46 +34,8 @@ function initMap() {
     directionsRenderer = new google.maps.DirectionsRenderer();
     directionsRenderer.setMap(map);
 
-    const elevator = new google.maps.ElevationService();
-    //const infowindow = new google.maps.InfoWindow({});
-    map.addListener("click", (clickEvent) =>{
-        latLngJSON = clickEvent.latLng.toJSON();
-        lat = latLngJSON.lat;
-        lon = latLngJSON.lng;
+    elevator = new google.maps.ElevationService();
 
-        elevator.getElevationForLocations(
-            {
-                locations: [clickEvent.latLng]
-            },
-            (results, status) => {
-                if(status == "OK" && results){
-                    let currentDateObj = new Date(Date.now());
-                    let date = currentDateObj.getUTCFullYear().toString() + '-' + currentDateObj.getUTCMonth().toString() + '-' + currentDateObj.getUTCDate().toString(); 
-                    let time = currentDateObj.getUTCHours().toString() + ':' + currentDateObj.getUTCMinutes().toString() + ':' + currentDateObj.getUTCSeconds().toString();
-                    //TODO:: modify call to get sun position instead
-                    let spa_url = 'http://localhost:3000/spa/' + date + '/' + time + '/' + lat.toString() + '/' + lon.toString() + '/' + results[0].elevation.toString();
-                    console.log('url ' + spa_url );
-                    let spaHttp = new XMLHttpRequest();
-                    //TODO:: rewrite with promise, third param false for synchronous 
-                    spaHttp.open("Get", spa_url);
-                    spaHttp.send();
-                    //TODO:: Add function for spaHttp readyState = 4 to process results
-                    
-                    //console.log("response of weather: " + spaHttp.responseText);
-                    
-                    //url = 'localhost:4000/spa/' + date + '/' + time + '/' + lat + '/' + lon + '/' + results[0].elevation + 
-                }
-                else if (status == "INVALID_REQUEST"){
-                    console.log("Invalid request");
-                }
-                else{
-                    console.log("other issue with request");
-                }
-            }
-            
-        );
-        
-    });
     fromAutocomplete.addListener("place_changed", ()=>{
         let place = fromAutocomplete.getPlace();
         // user did not click on a place
@@ -106,19 +69,57 @@ function calcRoute(departDate) {
         directionsService.route(request, (result, status) => {
             if(status == 'OK'){
                 directionsRenderer.setDirections(result);
+                console.log(result);
                 // if the status is okay then clear the markers and add new ones to the map
                 // TODO:: adjust to multiple routes once implemented
                 // doing every other node
                 clearMarkers();
-                for(let i = 0; i < result.routes[0].overview_path.length - 1; i+=2){
-                    let lat = result.routes[0].overview_path[i].lat();
-                    let lng = result.routes[0].overview_path[i].lng();
-                    sunMarkers.push(new google.maps.Marker({
-                        position: {lat: lat, 
-                            lng: lng},
-                        map, 
-                        title: `lat: ${lat} lng: ${lng}`
-                    }));
+                // Assuming only best route first (result.routes[0])
+                // Loop through each leg 
+                for(let i = 0; i < result.routes[0].legs.length; i++){
+                    // within each leg loop through all the steps
+                    for(let j = 0; j < result.routes[0].legs[i].steps.length; j++){
+                        let currStep = result.routes[0].legs[i].steps[j];
+                        // will never use more than 10 points in each step 
+                        let incrementInStep = currStep.lat_lngs.length > 10 ? Math.floor(currStep.lat_lngs.length / 10) : 1;
+                        for(let k = 0; k < currStep.lat_lngs.length; k += incrementInStep){
+                            let lat = currStep.lat_lngs[k].lat();
+                            let lng = currStep.lat_lngs[k].lng();
+                            elevator.getElevationForLocations(
+                                {
+                                    locations: [{"lat": lat, "lng": lng}]
+                                },
+                                (results, status) =>{
+                                    if(status == "OK" && results){
+                                        let date = departDate.getUTCFullYear().toString() + '-' + departDate.getUTCMonth().toString() + '-' + departDate.getUTCDate().toString(); 
+                                        let time = departDate.getUTCHours().toString() + ':' + departDate.getUTCMinutes().toString() + ':' + departDate.getUTCSeconds().toString();
+                                        let spa_url = 'http://localhost:3000/spa/' + date + '/' + time + '/' + lat.toString() + '/' + lon.toString() + '/' + results[0].elevation.toString();
+                                        let spaHttp = new XMLHttpRequest();
+                                        //TODO:: rewrite with promise, third param false for synchronous 
+                                        spaHttp.open("Get", spa_url);
+
+                                        // when request is finished then add marker
+                                        spaHttp.onload = function(){
+                                            sunMarkers.push(new google.maps.Marker({
+                                                position: {lat: lat, 
+                                                    lng: lng},
+                                                map, 
+                                                title: `lat: ${lat} lng: ${lng} \n spa: ${spaHttp.responseText}`
+                                            }));
+                                        }
+                                        //send message
+                                        spaHttp.send();
+                                    }
+                                    else if (status == "INVALID_REQUEST"){
+                                        console.log("Invalid request");
+                                    }
+                                    else{
+                                        console.log("other issue with request");
+                                    }
+                                }
+                            );    
+                        }
+                    }
                 }
             }
         });        
