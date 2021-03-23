@@ -96,42 +96,6 @@ function calcRoute(departDate) {
                             let datePush = new Date(departDate.getTime());
                             datePush.setSeconds(datePush.getSeconds() + deltaDuration);
                             dateSend.push(datePush);
-                            /* TODO:: create backend call to graph json object of lat[], lng[], dateSend[]
-                             * reason for this is so we dont send a call per loop
-                            elevator.getElevationForLocations(
-                                {
-                                    locations: [{"lat": lat, "lng": lng}]
-                                },
-                                (results, status) =>{
-                                    if(status == "OK" && results){
-                                        let date = departDate.getUTCFullYear().toString() + '-' + departDate.getUTCMonth().toString() + '-' + departDate.getUTCDate().toString(); 
-                                        let time = departDate.getUTCHours().toString() + ':' + departDate.getUTCMinutes().toString() + ':' + departDate.getUTCSeconds().toString();
-                                        let spa_url = 'http://localhost:3000/spa/' + date + '/' + time + '/' + lat.toString() + '/' + lon.toString() + '/' + results[0].elevation.toString();
-                                        let spaHttp = new XMLHttpRequest();
-                                        //TODO:: rewrite with promise, third param false for synchronous 
-                                        spaHttp.open("Get", spa_url);
-
-                                        // when request is finished then add marker
-                                        spaHttp.onload = function(){
-                                            sunMarkers.push(new google.maps.Marker({
-                                                position: {lat: lat, 
-                                                    lng: lng},
-                                                map, 
-                                                title: `lat: ${lat} lng: ${lng} \n spa: ${spaHttp.responseText}`
-                                            }));
-                                        }
-                                        //send message
-                                        spaHttp.send();
-                                    }
-                                    else if (status == "INVALID_REQUEST"){
-                                        console.log("Invalid request");
-                                    }
-                                    else{
-                                        console.log("other issue with request");
-                                    }
-                                }
-                            );    
-                            */
                         }
                     }
                 }
