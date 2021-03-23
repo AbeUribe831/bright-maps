@@ -53,4 +53,30 @@ def get_sun_position(date, time, lat, lon, elev):
         latitude=float(lat), longitude=float(lon), altitude=float(elev))
     print('\nCHECKING IF THIS PRINTS\n',sol,'\n')
     return make_response(jsonify({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0])}), 200)
+
+# used when given multiple dates from input
+@app.route('/spaDateTime', methods=['POST'])
+def post_sun_position_date_time():
+    # as a json object
+    print('here')
+    date_time = request.json
+    sunPosArr = []
+    for locAndTime in date_time["locAndTime"]:
+        sol = pvlib.solarposition.get_solarposition(time=pd.DatetimeIndex([locAndTime["date"]]),
+            latitude=float(locAndTime["lat"]), longitude=float(locAndTime["lng"]), altitude=float(locAndTime["elevation"]))
+        sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(locAndTime['lat']), 'lng': str(locAndTime['lng'])})
+    return make_response(jsonify(sunPosArr))
+
+# used when given only one date input
+@app.route('/spaSameTime', methods=['POST'])
+def post_sun_position_same_time():
+    date_time = request.json
+    print(date_time)
+    sunPosArr = []
+    for loc in date_time["location"]:
+        sol = pvlib.solarposition.get_solarposition(time=pd.DatetimeIndex([date_time["date"]]),
+            latitude=float(loc["lat"]), longitude=float(loc["lng"]), altitude=float(loc["elevation"]))
+        sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(loc['lat']), 'lng': str(loc['lng'])})
+    return make_response(jsonify(sunPosArr))
+ 
 app.run(host='127.0.0.1', port=3000)

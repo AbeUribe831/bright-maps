@@ -52,7 +52,6 @@ function initMap() {
     });
 }
 function calcRoute(departDate) {
-    console.log(departDate);
     let start = document.getElementById('from').value;
     let end = document.getElementById('to').value;
     let nowCheckbox = document.getElementById('current-time-checkbox');
@@ -70,6 +69,12 @@ function calcRoute(departDate) {
             if(status == 'OK'){
                 directionsRenderer.setDirections(result);
                 console.log(result);
+
+                // input data to send in json to backend
+                let latLngSend = [];
+                let dateSend = [];
+
+                let deltaDuration = 0;
                 // if the status is okay then clear the markers and add new ones to the map
                 // TODO:: adjust to multiple routes once implemented
                 // doing every other node
@@ -80,11 +85,19 @@ function calcRoute(departDate) {
                     // within each leg loop through all the steps
                     for(let j = 0; j < result.routes[0].legs[i].steps.length; j++){
                         let currStep = result.routes[0].legs[i].steps[j];
-                        // will never use more than 10 points in each step 
                         let incrementInStep = currStep.lat_lngs.length > 10 ? Math.floor(currStep.lat_lngs.length / 10) : 1;
+                        deltaDuration += currStep.duration["value"];
+                        // will never use more than 10 points in each step 
                         for(let k = 0; k < currStep.lat_lngs.length; k += incrementInStep){
-                            let lat = currStep.lat_lngs[k].lat();
-                            let lng = currStep.lat_lngs[k].lng();
+                            let lati = currStep.lat_lngs[k].lat();
+                            let lngi = currStep.lat_lngs[k].lng();
+                            // confirm this is a number
+                            latLngSend.push({lat: lati, lng: lngi});
+                            let datePush = new Date(departDate.getTime());
+                            datePush.setSeconds(datePush.getSeconds() + deltaDuration);
+                            dateSend.push(datePush);
+                            /* TODO:: create backend call to graph json object of lat[], lng[], dateSend[]
+                             * reason for this is so we dont send a call per loop
                             elevator.getElevationForLocations(
                                 {
                                     locations: [{"lat": lat, "lng": lng}]
@@ -118,9 +131,79 @@ function calcRoute(departDate) {
                                     }
                                 }
                             );    
+                            */
                         }
                     }
                 }
+                console.log(latLngSend);
+                elevator.getElevationForLocations(
+                    {
+                        locations: latLngSend
+                    },
+                    (elevResults, status) =>{
+                        // use the location from the elevResults for the request
+                        // if dateSend.length does not match elevResults.length then use departDate for request
+                        if(status == "OK" && elevResults){
+                            // if there is a discrepency between the two lengths then use the departDate 
+                            if(elevResults.length == dateSend.length){
+                                let locAndTimeSend = {locAndTime: []};
+                                for(let i = 0; i < elevResults.length; i++){
+                                    // converted to utc string that pandas object can be declared
+                                    let dt = dateSend[i].getUTCFullYear() + '-' + lessThanTenString(dateSend[i].getUTCMonth())  + 
+                                    '-' + lessThanTenString(dateSend[i].getUTCDate()) + ' ' + lessThanTenString(dateSend[i].getUTCHours()) + ':'
+                                         + lessThanTenString(dateSend[i].getUTCMinutes()) + ':' + lessThanTenString(dateSend[i].getUTCSeconds());
+                                    locAndTimeSend.locAndTime.push({
+                                        lat: elevResults[i].location.lat(),
+                                        lng: elevResults[i].location.lng(),
+                                        elevation: elevResults[i].elevation,
+                                        date: dt 
+                                    });
+                                }
+                                let spa_url = "http://localhost:3000/spaDateTime";
+                                let spaHttp = new XMLHttpRequest();
+                                spaHttp.open("POST", spa_url);
+                                spaHttp.setRequestHeader("Content-Type", "application/json");
+                                // what to do when request is done
+
+                                spaHttp.onload = ()=>{
+                                  setSunMarkers(JSON.parse(spaHttp.responseText), sunMarkers);  
+                                };
+                                spaHttp.send(JSON.stringify(locAndTimeSend));
+                            }
+                            // TODO:: send a similar request with the same date
+                            else{
+                                let dt = departDate.getUTCFullYear() + '-' + lessThanTenString(departDate.getUTCMonth())  + 
+                                    '-' + lessThanTenString(departDate.getUTCDate()) + ' ' + lessThanTenString(departDate.getUTCHours()) + ':'
+                                         + lessThanTenString(departDate.getUTCMinutes()) + ':' + lessThanTenString(departDate.getUTCSeconds());
+                                let locSend = {date: dt, location: []};
+                               for(let i = 0; i < elevResults.length; i++){
+                                   locSend.location.push({
+                                        lat: elevResults[i].location.lat(),
+                                        lng: elevResults[i].location.lng(),
+                                        elevation: elevResults[i].elevation
+                                    });
+                               } 
+                               let spa_url = "http://localhost:3000/spaSameTime";
+                               let spaHttp = new XMLHttpRequest();
+                               spaHttp.open("POST", spa_url);
+                               spaHttp.setRequestHeader("Content-Type", "application/json");
+
+                                spaHttp.onload = ()=>{
+                                    setSunMarkers(JSON.parse(spaHttp.responseText), sunMarkers);  
+                                };
+
+                               spaHttp.send(JSON.stringify(locSend));
+                            }
+                        }
+                        else if(status == "INVALID_REQUEST"){
+                            console.log("Invalid Elevation request, check coordinates being sent");
+                        }
+                        else{
+                            console.log("other issue with request");
+                        }
+                    }
+                )
+                console.log('stop');
             }
         });        
     }
@@ -151,6 +234,9 @@ function setDefaultTime(){
     document.getElementById("year-going-back").value = now.getFullYear();
     
 
+}
+function lessThanTenString(num){
+    return num < 10 ? '0' + num : num.toString();
 }
 // Whenever page is loading set the default values
 document.addEventListener('readystatechange', (event) => {
@@ -188,5 +274,14 @@ function flipHoverOff() {
 function clearMarkers() {
     for (let i = 0; i < sunMarkers.length; i++){
         sunMarkers[i].setMap(null);
+    }
+}
+function setSunMarkers(jsonInput, marker){
+    for(let i = 0; i < jsonInput.length; i++){
+        marker.push(new google.maps.Marker({
+           position: {lat: parseFloat(jsonInput[i]['lat']),
+                lng: parseFloat(jsonInput[i]['lng'])},
+            map,
+            title: `Sun Elevation: ${jsonInput[i]['elevation']}, Azimuth: ${jsonInput[i]['azimuth']}, lat: ${jsonInput[i]['lat']}, lng: ${jsonInput[i]['lng']}`}));
     }
 }
