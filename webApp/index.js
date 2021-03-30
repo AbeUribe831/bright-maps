@@ -85,10 +85,18 @@ function calcRoute(departDate) {
                     // within each leg loop through all the steps
                     for(let j = 0; j < result.routes[0].legs[i].steps.length; j++){
                         let currStep = result.routes[0].legs[i].steps[j];
-                        let incrementInStep = currStep.lat_lngs.length > 10 ? Math.floor(currStep.lat_lngs.length / 10) : 1;
+                        let interval;
+                        // 3218 is number of meters in two miles
+                        if(currStep.distance.value < 3218){
+                            interval = currStep.lat_lngs.length - 1;
+                        }
+                        // interval in a per mile basis
+                        else{
+                            interval = Math.floor(((currStep.lat_lngs.length * 1609) / currStep.distance.value) - 1);
+                        }
                         deltaDuration += currStep.duration["value"];
-                        // will never use more than 10 points in each step 
-                        for(let k = 0; k < currStep.lat_lngs.length; k += incrementInStep){
+                        // TODO:: adjust the time for every mile based on speed limit
+                        for(let k = 0; k < currStep.lat_lngs.length; k += interval){
                             let lati = currStep.lat_lngs[k].lat();
                             let lngi = currStep.lat_lngs[k].lng();
                             // confirm this is a number
@@ -100,74 +108,84 @@ function calcRoute(departDate) {
                     }
                 }
                 console.log(latLngSend);
-                elevator.getElevationForLocations(
-                    {
-                        locations: latLngSend
-                    },
-                    (elevResults, status) =>{
-                        // use the location from the elevResults for the request
-                        // if dateSend.length does not match elevResults.length then use departDate for request
-                        if(status == "OK" && elevResults){
-                            // if there is a discrepency between the two lengths then use the departDate 
-                            if(elevResults.length == dateSend.length){
-                                let locAndTimeSend = {locAndTime: []};
-                                for(let i = 0; i < elevResults.length; i++){
-                                    // converted to utc string that pandas object can be declared
-                                    let dt = dateSend[i].getUTCFullYear() + '-' + lessThanTenString(dateSend[i].getUTCMonth())  + 
-                                    '-' + lessThanTenString(dateSend[i].getUTCDate()) + ' ' + lessThanTenString(dateSend[i].getUTCHours()) + ':'
-                                         + lessThanTenString(dateSend[i].getUTCMinutes()) + ':' + lessThanTenString(dateSend[i].getUTCSeconds());
-                                    locAndTimeSend.locAndTime.push({
-                                        lat: elevResults[i].location.lat(),
-                                        lng: elevResults[i].location.lng(),
-                                        elevation: elevResults[i].elevation,
-                                        date: dt 
-                                    });
+                console.log(dateSend);
+                // Send packet in intervals of 500 latlng points
+                // TODO:: deal with long distances like Salinas, CA to Austin, this will exceed to query limit
+                while(latLngSend.length != 0){
+                    let splicedLatLngSend = latLngSend.splice(0, 500);
+                    let splicedDateSend = dateSend.splice(0, 500);
+                    elevator.getElevationForLocations(
+                        {
+                            locations: splicedLatLngSend
+                        },
+                        (elevResults, status) =>{
+                            console.log(status);
+                            // use the location from the elevResults for the request
+                            console.log(elevResults);
+                            // if splicedDateSend.length does not match elevResults.length then use departDate for request
+                            if(status == "OK" && elevResults){
+                                // if there is a discrepency between the two lengths then use the departDate 
+                                if(elevResults.length == splicedDateSend.length){
+                                    let locAndTimeSend = {locAndTime: []};
+                                    console.log(splicedDateSend[0].getUTCMonth());
+                                    for(let i = 0; i < elevResults.length; i++){
+                                        let month = Math.min(splicedDateSend[i].getUTCMonth() + 1, 12);
+                                        // converted to utc string that pandas object can be declared
+                                        let dt = splicedDateSend[i].getUTCFullYear() + '-' + lessThanTenString(month)  + 
+                                        '-' + lessThanTenString(splicedDateSend[i].getUTCDate()) + ' ' + lessThanTenString(splicedDateSend[i].getUTCHours()) + ':'
+                                             + lessThanTenString(splicedDateSend[i].getUTCMinutes()) + ':' + lessThanTenString(splicedDateSend[i].getUTCSeconds());
+                                        locAndTimeSend.locAndTime.push({
+                                            lat: elevResults[i].location.lat(),
+                                            lng: elevResults[i].location.lng(),
+                                            elevation: elevResults[i].elevation,
+                                            date: dt 
+                                        });
+                                    }
+                                    let spa_url = "http://localhost:3000/spaDateTime";
+                                    let spaHttp = new XMLHttpRequest();
+                                    spaHttp.open("POST", spa_url);
+                                    spaHttp.setRequestHeader("Content-Type", "application/json");
+                                    // what to do when request is done
+                                    console.log(JSON.stringify(locAndTimeSend));
+                                    spaHttp.onload = ()=>{
+                                      setSunMarkers(JSON.parse(spaHttp.responseText), sunMarkers);  
+                                    };
+                                    spaHttp.send(JSON.stringify(locAndTimeSend));
                                 }
-                                let spa_url = "http://localhost:3000/spaDateTime";
-                                let spaHttp = new XMLHttpRequest();
-                                spaHttp.open("POST", spa_url);
-                                spaHttp.setRequestHeader("Content-Type", "application/json");
-                                // what to do when request is done
-
-                                spaHttp.onload = ()=>{
-                                  setSunMarkers(JSON.parse(spaHttp.responseText), sunMarkers);  
-                                };
-                                spaHttp.send(JSON.stringify(locAndTimeSend));
+                                // TODO:: send a similar request with the same date
+                                else{
+                                    let dt = departDate.getUTCFullYear() + '-' + lessThanTenString(departDate.getUTCMonth() + 1)  + 
+                                        '-' + lessThanTenString(departDate.getUTCDate()) + ' ' + lessThanTenString(departDate.getUTCHours()) + ':'
+                                             + lessThanTenString(departDate.getUTCMinutes()) + ':' + lessThanTenString(departDate.getUTCSeconds());
+                                    let locSend = {date: dt, location: []};
+                                   for(let i = 0; i < elevResults.length; i++){
+                                       locSend.location.push({
+                                            lat: elevResults[i].location.lat(),
+                                            lng: elevResults[i].location.lng(),
+                                            elevation: elevResults[i].elevation
+                                        });
+                                   } 
+                                   let spa_url = "http://localhost:3000/spaSameTime";
+                                   let spaHttp = new XMLHttpRequest();
+                                   spaHttp.open("POST", spa_url);
+                                   spaHttp.setRequestHeader("Content-Type", "application/json");
+    
+                                    spaHttp.onload = ()=>{
+                                        setSunMarkers(JSON.parse(spaHttp.responseText), sunMarkers);  
+                                    };
+    
+                                   spaHttp.send(JSON.stringify(locSend));
+                                }
                             }
-                            // TODO:: send a similar request with the same date
+                            else if(status == "INVALID_REQUEST"){
+                                console.log("Invalid Elevation request, check coordinates being sent");
+                            }
                             else{
-                                let dt = departDate.getUTCFullYear() + '-' + lessThanTenString(departDate.getUTCMonth())  + 
-                                    '-' + lessThanTenString(departDate.getUTCDate()) + ' ' + lessThanTenString(departDate.getUTCHours()) + ':'
-                                         + lessThanTenString(departDate.getUTCMinutes()) + ':' + lessThanTenString(departDate.getUTCSeconds());
-                                let locSend = {date: dt, location: []};
-                               for(let i = 0; i < elevResults.length; i++){
-                                   locSend.location.push({
-                                        lat: elevResults[i].location.lat(),
-                                        lng: elevResults[i].location.lng(),
-                                        elevation: elevResults[i].elevation
-                                    });
-                               } 
-                               let spa_url = "http://localhost:3000/spaSameTime";
-                               let spaHttp = new XMLHttpRequest();
-                               spaHttp.open("POST", spa_url);
-                               spaHttp.setRequestHeader("Content-Type", "application/json");
-
-                                spaHttp.onload = ()=>{
-                                    setSunMarkers(JSON.parse(spaHttp.responseText), sunMarkers);  
-                                };
-
-                               spaHttp.send(JSON.stringify(locSend));
+                                console.log("other issue with request");
                             }
                         }
-                        else if(status == "INVALID_REQUEST"){
-                            console.log("Invalid Elevation request, check coordinates being sent");
-                        }
-                        else{
-                            console.log("other issue with request");
-                        }
-                    }
-                )
-                console.log('stop');
+                    )
+                }
             }
         });        
     }
