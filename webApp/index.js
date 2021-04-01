@@ -119,15 +119,12 @@ function calcRoute(departDate) {
                             locations: splicedLatLngSend
                         },
                         (elevResults, status) =>{
-                            console.log(status);
                             // use the location from the elevResults for the request
-                            console.log(elevResults);
                             // if splicedDateSend.length does not match elevResults.length then use departDate for request
                             if(status == "OK" && elevResults){
                                 // if there is a discrepency between the two lengths then use the departDate 
                                 if(elevResults.length == splicedDateSend.length){
                                     let locAndTimeSend = {locAndTime: []};
-                                    console.log(splicedDateSend[0].getUTCMonth());
                                     for(let i = 0; i < elevResults.length; i++){
                                         let month = Math.min(splicedDateSend[i].getUTCMonth() + 1, 12);
                                         // converted to utc string that pandas object can be declared
@@ -141,12 +138,12 @@ function calcRoute(departDate) {
                                             date: dt 
                                         });
                                     }
-                                    let spa_url = "http://localhost:3000/spaDateTime";
+                                    let spa_url = "http://localhost:3000/demoSpaSameTime";
                                     let spaHttp = new XMLHttpRequest();
                                     spaHttp.open("POST", spa_url);
                                     spaHttp.setRequestHeader("Content-Type", "application/json");
                                     // what to do when request is done
-                                    console.log(JSON.stringify(locAndTimeSend));
+                                    console.log(locAndTimeSend);
                                     spaHttp.onload = ()=>{
                                       setSunMarkers(JSON.parse(spaHttp.responseText), sunMarkers);  
                                     };
@@ -165,7 +162,7 @@ function calcRoute(departDate) {
                                             elevation: elevResults[i].elevation
                                         });
                                    } 
-                                   let spa_url = "http://localhost:3000/spaSameTime";
+                                   let spa_url = "http://localhost:3000/demoSpaSameTime";
                                    let spaHttp = new XMLHttpRequest();
                                    spaHttp.open("POST", spa_url);
                                    spaHttp.setRequestHeader("Content-Type", "application/json");
@@ -259,11 +256,18 @@ function clearMarkers() {
     }
 }
 function setSunMarkers(jsonInput, marker){
+    console.log("set markers");
+    console.log(jsonInput);
     for(let i = 0; i < jsonInput.length; i++){
+        color = (jsonInput[i]['hasGlare'] === "true") ? "http://maps.google.com/mapfiles/ms/icons/red-dot.png" : "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+        console.log(i + " " + color);
         marker.push(new google.maps.Marker({
            position: {lat: parseFloat(jsonInput[i]['lat']),
                 lng: parseFloat(jsonInput[i]['lng'])},
+            icon: {
+                url: color
+            },
             map,
-            title: `Sun Elevation: ${jsonInput[i]['elevation']}, Azimuth: ${jsonInput[i]['azimuth']}, lat: ${jsonInput[i]['lat']}, lng: ${jsonInput[i]['lng']}`}));
+            title: `index: ${i}, Sun Elevation: ${jsonInput[i]['elevation']}, Azimuth: ${jsonInput[i]['azimuth']}, lat: ${jsonInput[i]['lat']}, lng: ${jsonInput[i]['lng']}`}));
     }
 }
