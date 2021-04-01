@@ -58,7 +58,6 @@ def get_sun_position(date, time, lat, lon, elev):
 @app.route('/spaDateTime', methods=['POST'])
 def post_sun_position_date_time():
     # as a json object
-    print('here')
     date_time = request.json
     sunPosArr = []
     for locAndTime in date_time["locAndTime"]:
@@ -71,12 +70,38 @@ def post_sun_position_date_time():
 @app.route('/spaSameTime', methods=['POST'])
 def post_sun_position_same_time():
     date_time = request.json
-    print(date_time)
     sunPosArr = []
     for loc in date_time["location"]:
         sol = pvlib.solarposition.get_solarposition(time=pd.DatetimeIndex([date_time["date"]]),
             latitude=float(loc["lat"]), longitude=float(loc["lng"]), altitude=float(loc["elevation"]))
         sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(loc['lat']), 'lng': str(loc['lng'])})
     return make_response(jsonify(sunPosArr))
- 
+
+# used when given only one date input
+@app.route('/demoSpaSameTime', methods=['POST'])
+def demo_post_sun_position_same_time():
+    date_time = request.json
+    sunPosArr = []
+    for locAndTime in date_time["locAndTime"]:
+        sol = pvlib.solarposition.get_solarposition(time=pd.DatetimeIndex([locAndTime["date"]]),
+            latitude=float(locAndTime["lat"]), longitude=float(locAndTime["lng"]), altitude=float(locAndTime["elevation"]))
+        sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(locAndTime['lat']), 'lng': str(locAndTime['lng'])})
+    '''
+    Code from paper 'A novel method for predicting and mapping the presence of sun glare using Google Street View'
+    with sunPosArr we can send this to the Google Street View API to get the right image then pass to 
+    the PSPNet (neural network). 
+    input: 
+        - sunPosArr -> azimuth, sun elevation, lat, lng
+        - GSV image -> driver direction, slope of ange of driveway (both given from the GSV image's metadata)
+    output:
+        - boolean on if the user will get sunglare or not
+    
+    TODO:: figure out when to pass data, in the for loop (one at a time), or after (the whole sunPosArr list)
+    '''
+    # will make every other data point return true just for demo's sake
+    tempBool = False
+    for i in range(0, len(sunPosArr)):
+        sunPosArr[i]['hasGlare'] = 'true' if tempBool else 'false'
+        tempBool = not tempBool
+    return make_response(jsonify(sunPosArr))
 app.run(host='127.0.0.1', port=3000)
