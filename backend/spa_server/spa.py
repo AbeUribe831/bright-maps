@@ -50,16 +50,15 @@ def _get_pressure_and_temperature(lat, lon):
         return {"temp" : temp, "pressure": pressure}
     return make_response(jsonify({"message": "Request was bad"}), 400)
 # Definelty need a better way to route all this data but this should allow js app to get sun's position
+'''
 @app.route('/spa/<date>/<time>/<lat>/<lon>/<elev>')
 def get_sun_position(date, time, lat, lon, elev):
-    '''
     due to limit on weather data available we will exclude it for now
     weather = _get_pressure_and_temperature(lat, lon)
     sol = pvlib.solarposition.get_solarposition(time=pd.DatetimeIndex([str(date) + ' ' + str(time)]),
         latitude=float(lat), longitude=float(lon), altitude=float(elev), pressure=float(weather['pressure']) * 100, temperature=float(weather['temp']))
     print('\nCHECKING IF THIS PRINTS\n',sol,'\n')
     return make_response(jsonify({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0])}), 200)
-    '''
     sol = pvlib.solarposition.get_solarposition(time=pd.DatetimeIndex([str(date) + ' ' + str(time)]),
         latitude=float(lat), longitude=float(lon), altitude=float(elev))
     print('\nCHECKING IF THIS PRINTS\n',sol,'\n')
@@ -88,6 +87,7 @@ def post_sun_position_same_time():
         sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(loc['lat']), 'lng': str(loc['lng'])})
     return make_response(jsonify(sunPosArr))
 
+'''
 # used when given only one date input
 @app.route('/demoSpaSameTime', methods=['POST'])
 def demo_post_sun_position_same_time():
