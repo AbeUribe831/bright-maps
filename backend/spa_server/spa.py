@@ -1,12 +1,19 @@
+from threading import local
+from time import localtime
 from flask import Flask
 from flask import request
 from flask import render_template
 from flask import jsonify
 from flask import make_response
+from astral import sun, Observer
 import json
 import pandas as pd
 import pvlib
 import requests
+from timezonefinder import TimezoneFinder
+import datetime
+import dateutil.tz
+import pytz
 
 app = Flask(__name__)
 
@@ -27,6 +34,10 @@ def get_pressure_and_temperature(lat, lon):
         return make_response(jsonify({"temp" : str(temp), "pressure": str(pressure)}), 200)
     return make_response(jsonify({"message": "Request was bad"}), 400)
 '''
+
+def _time_in_seconds_is_within_an_hour(time1, time2):
+    return 'true' if abs((time1 - time2).total_seconds()) < 3600 else 'false'
+
 # TODO:: fix case when error message is received
 def _get_pressure_and_temperature(lat, lon):
     response = requests.get(OPEN_WEATHER_CURRENT.format(lat=lat, lon=lon, API_key=API_KEY))
@@ -82,10 +93,20 @@ def post_sun_position_same_time():
 def demo_post_sun_position_same_time():
     date_time = request.json
     sunPosArr = []
+    # convert tz to seconds
+    tz_hour = date_time['utc_offset']
+    tzSec = (int(tz_hour[1:3]) * 60 * 60) + (int(tz_hour[3:5]) * 60)
+    tzSec = -tzSec if  tz_hour[0] == '-' else tzSec
+
+    # calculation is done in local time due to UTC getting sunset on future date
     for locAndTime in date_time["locAndTime"]:
-        sol = pvlib.solarposition.get_solarposition(time=pd.DatetimeIndex([locAndTime["date"]]),
-            latitude=float(locAndTime["lat"]), longitude=float(locAndTime["lng"]), altitude=float(locAndTime["elevation"]))
-        sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(locAndTime['lat']), 'lng': str(locAndTime['lng'])})
+        observer = Observer(latitude=locAndTime['lat'], longitude=locAndTime['lng'], elevation=locAndTime['elevation'])
+        localDateTime = datetime.datetime(year=int(locAndTime['date']['year']), month=int(locAndTime['date']['month']), day=int(locAndTime['date']['day']), hour=int(locAndTime['date']['hour']), minute=int(locAndTime['date']['minute']), second=int(locAndTime['date']['second']), tzinfo=dateutil.tz.tzoffset(None, tzSec))
+        sunrise = sun.sunrise(observer, date=localDateTime, tzinfo=dateutil.tz.tzoffset(None, tzSec))
+        sunset = sun.sunset(observer, date=localDateTime, tzinfo=dateutil.tz.tzoffset(None, tzSec))
+        sunPosArr.append({'lat': locAndTime['lat'], 'lng': locAndTime['lng'],'glareAtSunrise': _time_in_seconds_is_within_an_hour(localDateTime, sunrise), 'glareAtSunset': _time_in_seconds_is_within_an_hour(localDateTime, sunset), 'local_time': localDateTime.strftime('%c')})
+
+        #sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(locAndTime['lat']), 'lng': str(locAndTime['lng'])})
     '''
     Code from paper 'A novel method for predicting and mapping the presence of sun glare using Google Street View'
     with sunPosArr we can send this to the Google Street View API to get the right image then pass to 
@@ -99,9 +120,11 @@ def demo_post_sun_position_same_time():
     TODO:: figure out when to pass data, in the for loop (one at a time), or after (the whole sunPosArr list)
     '''
     # will make every other data point return true just for demo's sake
+    '''
     tempBool = False
     for i in range(0, len(sunPosArr)):
         sunPosArr[i]['hasGlare'] = 'true' if tempBool else 'false'
         tempBool = not tempBool
+    '''
     return make_response(jsonify(sunPosArr))
 app.run(host='127.0.0.1', port=3000)
