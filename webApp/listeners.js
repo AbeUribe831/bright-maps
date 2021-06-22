@@ -163,7 +163,7 @@ function getRoute(){
     // use time in checkbox
     else {
         let year = parseInt(document.getElementById("year-going-there").value);
-        let month = parseInt(document.getElementById("month-going-there").value);
+        let month = parseInt(document.getElementById("month-going-there").value) - 1;
         let day = parseInt(document.getElementById("day-going-there").value);
         let hour = parseInt(document.getElementById("hour-going-there").value) % 12;
         let minute = parseInt(document.getElementById("minute-going-there").value);

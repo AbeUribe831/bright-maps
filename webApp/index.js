@@ -11,6 +11,231 @@ let prev_to = "";
 let prev_gtd = 0;
 let sunMarkers = [];
 let elevator;
+
+const listOfTimeZones = [
+    {
+        "label":"Pacific/Midway (GMT-11:00)",
+		"tzCode":"Pacific/Midway",
+		"name":"(GMT-11:00) SST",
+		"utc":"-11:00"
+    },
+    {
+		"label":"Pacific/Honolulu (GMT-10:00)",
+		"tzCode":"Pacific/Honolulu",
+		"name":"(GMT-10:00) HST",
+		"utc":"-10:00"
+	},
+    {
+		"label":"Pacific/Marquesas (GMT-09:30)",
+		"tzCode":"Pacific/Marquesas",
+		"name":"(GMT-09:30) Taiohae",
+		"utc":"-09:30"
+	},
+    {
+		"label":"America/Adak (GMT-09:00)",
+		"tzCode":"America/Adak",
+		"name":"(GMT-09:00) HDT",
+		"utc":"-09:00"
+	},
+    {
+		"label":"America/Anchorage (GMT-08:00)",
+		"tzCode":"America/Anchorage",
+		"name":"(GMT-08:00) AKDT",
+		"utc":"-08:00"
+	},
+    {
+		"label":"America/Los Angeles (GMT-07:00)",
+		"tzCode":"America/Los_Angeles",
+		"name":"(GMT-07:00) PDT",
+		"utc":"-07:00"
+	},
+    {
+		"label":"America/Denver (GMT-06:00)",
+		"tzCode":"America/Denver",
+		"name":"(GMT-06:00) MDT",
+		"utc":"-06:00"
+	},
+    {
+		"label":"America/Atikokan (GMT-05:00)",
+		"tzCode":"America/Atikokan",
+		"name":"(GMT-05:00) CDT",
+		"utc":"-05:00"
+	},
+    {
+		"label":"America/AnguillaSandy Hill (GMT-04:00)",
+		"tzCode":"America/AnguillaSandy Hill",
+		"name":"(GMT-04:00) EDT",
+		"utc":"-04:00"
+	},
+    {
+		"label":"America/St_Johns (GMT-03:30)",
+		"tzCode":"America/St_Johns",
+		"name":"(GMT-03:30) St. John's",
+		"utc":"-03:30"
+	},
+    {
+		"label":"America/Araguaina (GMT-03:00)",
+		"tzCode":"America/Araguaina",
+		"name":"(GMT-03:00) ADT",
+		"utc":"-03:00"
+	},
+    {
+		"label":"America/Noronha (GMT-02:00)",
+		"tzCode":"America/Noronha",
+		"name":"(GMT-02:00) WGST",
+		"utc":"-02:00"
+	},
+    {
+		"label":"America/Scoresbysund (GMT-01:00)",
+		"tzCode":"America/Scoresbysund",
+		"name":"(GMT-01:00) CVT",
+		"utc":"-01:00"
+	},
+    {
+		"label":"Europe/London (GMT+00:00)",
+		"tzCode":"Europe/London",
+		"name":"(GMT+00:00) GMT",
+		"utc":"+00:00"
+	},
+    {
+		"label":"Europe/Berlin (GMT+01:00)",
+		"tzCode":"Europe/Berlin",
+		"name":"(GMT+01:00) BST",
+		"utc":"+01:00"
+	},
+    {
+		"label":"Europe/Helsinki (GMT+02:00)",
+		"tzCode":"Europe/Helsinki",
+		"name":"(GMT+02:00) CAT",
+		"utc":"+02:00"
+	},
+    {
+		"label":"Europe/Moscow (GMT+03:00)",
+		"tzCode":"Europe/Moscow",
+		"name":"(GMT+03:00) EAT",
+		"utc":"+03:00"
+	},
+    {
+		"label":"Asia/Tehran (GMT+03:30)",
+		"tzCode":"Asia/Tehran",
+		"name":"(GMT+03:30) Tehran",
+		"utc":"+03:30"
+	},
+    {
+		"label":"Asia/Dubai (GMT+04:00)",
+		"tzCode":"Asia/Dubai",
+		"name":"(GMT+04:00) GST",
+		"utc":"+04:00"
+	},
+    {
+		"label":"Asia/Kabul (GMT+04:30)",
+		"tzCode":"Asia/Kabul",
+		"name":"(GMT+04:30) Kabul",
+		"utc":"+04:30"
+	},
+    {
+		"label":"Asia/Aqtau (GMT+05:00)",
+		"tzCode":"Asia/Aqtau",
+		"name":"(GMT+05:00) YEKT",
+		"utc":"+05:00"
+	},
+    {
+		"label":"Asia/Colombo (GMT+05:30)",
+		"tzCode":"Asia/Colombo",
+		"name":"(GMT+05:30) Colombo",
+		"utc":"+05:30"
+	},
+    {
+		"label":"Asia/Kathmandu (GMT+05:45)",
+		"tzCode":"Asia/Kathmandu",
+		"name":"(GMT+05:45) Kathmandu",
+		"utc":"+05:45"
+	},
+    {
+		"label":"Asia/Almaty (GMT+06:00)",
+		"tzCode":"Asia/Almaty",
+		"name":"(GMT+06:00) KGT",
+		"utc":"+06:00"
+	},
+    {
+		"label":"Asia/Yangon (GMT+06:30)",
+		"tzCode":"Asia/Yangon",
+		"name":"(GMT+06:30) Yangon",
+		"utc":"+06:30"
+	},
+    {
+		"label":"Asia/Bangkok (GMT+07:00)",
+		"tzCode":"Asia/Bangkok",
+		"name":"(GMT+07:00) KRAT",
+		"utc":"+07:00"
+	},
+    {
+		"label":"Asia/Brunei (GMT+08:00)",
+		"tzCode":"Asia/Brunei",
+		"name":"(GMT+08:00) CST",
+		"utc":"+08:00"
+	},
+    {
+		"label":"Australia/Eucla (GMT+08:45)",
+		"tzCode":"Australia/Eucla",
+		"name":"(GMT+08:45) Eucla",
+		"utc":"+08:45"
+	},
+    {
+		"label":"Asia/Tokyo (GMT+09:00)",
+		"tzCode":"Asia/Tokyo",
+		"name":"(GMT+09:00) YAKT",
+		"utc":"+09:00"
+	},
+    {
+		"label":"Australia/Adelaide (GMT+09:30)",
+		"tzCode":"Australia/Adelaide",
+		"name":"(GMT+09:30) Adelaide",
+		"utc":"+09:30"
+	},
+    {
+		"label":"Australia/Melbourne (GMT+10:00)",
+		"tzCode":"Australia/Melbourne",
+		"name":"(GMT+10:00) AEST",
+		"utc":"+10:00"
+	},
+    {
+		"label":"Australia/Lord_Howe (GMT+10:30)",
+		"tzCode":"Australia/Lord_Howe",
+		"name":"(GMT+10:30) Lord Howe",
+		"utc":"+10:30"
+	},
+    {
+		"label":"Pacific/Bougainville (GMT+11:00)",
+		"tzCode":"Pacific/Bougainville",
+		"name":"(GMT+11:00) SRET",
+		"utc":"+11:00"
+	},
+    {
+		"label":"Pacific/Fiji (GMT+12:00)",
+		"tzCode":"Pacific/Fiji",
+		"name":"(GMT+12:00) NZST",
+		"utc":"+12:00"
+	},
+    {
+		"label":"Pacific/Chatham (GMT+12:45)",
+		"tzCode":"Pacific/Chatham",
+		"name":"(GMT+12:45) Waitangi",
+		"utc":"+12:45"
+	},
+    {
+		"label":"Pacific/Enderbury (GMT+13:00)",
+		"tzCode":"Pacific/Enderbury",
+		"name":"(GMT+13:00) Enderbury",
+		"utc":"+13:00"
+	},
+    {
+		"label":"Pacific/Kiritimati (GMT+14:00)",
+		"tzCode":"Pacific/Kiritimati",
+		"name":"(GMT+14:00) Kiritimati",
+		"utc":"+14:00"
+	}
+];
 function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
         center: {lat: lat, lng: lon},
@@ -118,70 +343,60 @@ function calcRoute(departDate) {
                         {
                             locations: splicedLatLngSend
                         },
-                        (elevResults, status) =>{
+                        (elevResults, status) => {
                             // use the location from the elevResults for the request
-                            // if splicedDateSend.length does not match elevResults.length then use departDate for request
-                            if(status == "OK" && elevResults){
-                                // if there is a discrepency between the two lengths then use the departDate 
-                                if(elevResults.length == splicedDateSend.length){
-                                    let locAndTimeSend = {locAndTime: []};
-                                    for(let i = 0; i < elevResults.length; i++){
-                                        let month = Math.min(splicedDateSend[i].getUTCMonth() + 1, 12);
-                                        // converted to utc string that pandas object can be declared
-                                        let dt = splicedDateSend[i].getUTCFullYear() + '-' + lessThanTenString(month)  + 
-                                        '-' + lessThanTenString(splicedDateSend[i].getUTCDate()) + ' ' + lessThanTenString(splicedDateSend[i].getUTCHours()) + ':'
-                                             + lessThanTenString(splicedDateSend[i].getUTCMinutes()) + ':' + lessThanTenString(splicedDateSend[i].getUTCSeconds());
+                            // if splicedDateSend.length does not match elvResults.length then use departDate for request
+                            if(status == "OK" && elevResults) {
+                                // if there is a discrepency between the two lengths then use the departDate
+                                if(elevResults.length == splicedDateSend.length) {
+                                    //
+                                    let locAndTimeSend = {
+                                        locAndTime: [],
+                                        utc_offset: new Date().toString().match(/(GMT){1}[+-]{1}\d{4}/g)[0].substring(3)
+                                    };
+                                    console.log('spliced:',splicedDateSend);
+                                    for(let i = 0; i < splicedDateSend.length; i++){
+                                        let month = Math.min(splicedDateSend[i].getMonth() + 1, 12);
+                                        // pass local date and time to server
                                         locAndTimeSend.locAndTime.push({
-                                            lat: elevResults[i].location.lat(),
-                                            lng: elevResults[i].location.lng(),
+                                            lat: splicedLatLngSend[i].lat,
+                                            lng: splicedLatLngSend[i].lng,
                                             elevation: elevResults[i].elevation,
-                                            date: dt 
+                                            date: {
+                                                year: splicedDateSend[i].getFullYear(),
+                                                month: lessThanTenString(month),
+                                                day: lessThanTenString(splicedDateSend[i].getDate()),
+                                                hour: lessThanTenString(splicedDateSend[i].getHours()),
+                                                minute: lessThanTenString(splicedDateSend[i].getMinutes()),
+                                                second: lessThanTenString(splicedDateSend[i].getSeconds())
+                                            }
                                         });
-                                    }
+                                    }   
                                     let spa_url = "http://localhost:3000/demoSpaSameTime";
                                     let spaHttp = new XMLHttpRequest();
                                     spaHttp.open("POST", spa_url);
                                     spaHttp.setRequestHeader("Content-Type", "application/json");
                                     // what to do when request is done
-                                    console.log(locAndTimeSend);
-                                    spaHttp.onload = ()=>{
-                                      setSunMarkers(JSON.parse(spaHttp.responseText), sunMarkers);  
-                                    };
-                                    spaHttp.send(JSON.stringify(locAndTimeSend));
-                                }
-                                // TODO:: send a similar request with the same date
-                                else{
-                                    let dt = departDate.getUTCFullYear() + '-' + lessThanTenString(departDate.getUTCMonth() + 1)  + 
-                                        '-' + lessThanTenString(departDate.getUTCDate()) + ' ' + lessThanTenString(departDate.getUTCHours()) + ':'
-                                             + lessThanTenString(departDate.getUTCMinutes()) + ':' + lessThanTenString(departDate.getUTCSeconds());
-                                    let locSend = {date: dt, location: []};
-                                   for(let i = 0; i < elevResults.length; i++){
-                                       locSend.location.push({
-                                            lat: elevResults[i].location.lat(),
-                                            lng: elevResults[i].location.lng(),
-                                            elevation: elevResults[i].elevation
-                                        });
-                                   } 
-                                   let spa_url = "http://localhost:3000/demoSpaSameTime";
-                                   let spaHttp = new XMLHttpRequest();
-                                   spaHttp.open("POST", spa_url);
-                                   spaHttp.setRequestHeader("Content-Type", "application/json");
-    
+                                    console.log('locAndTimeSend', locAndTimeSend);
                                     spaHttp.onload = ()=>{
                                         setSunMarkers(JSON.parse(spaHttp.responseText), sunMarkers);  
                                     };
-    
-                                   spaHttp.send(JSON.stringify(locSend));
+                                    spaHttp.send(JSON.stringify(locAndTimeSend));          
+                                }
+                                // TODO:: what to do when elevation is not equal
+                                else {
+                                    console.log("elevation results does not match");
                                 }
                             }
-                            else if(status == "INVALID_REQUEST"){
+                            else if(status == "INVALID_REQUEST") {
                                 console.log("Invalid Elevation request, check coordinates being sent");
                             }
-                            else{
+                            else {
                                 console.log("other issue with request");
                             }
                         }
                     )
+
                 }
             }
         });        
@@ -259,8 +474,19 @@ function setSunMarkers(jsonInput, marker){
     console.log("set markers");
     console.log(jsonInput);
     for(let i = 0; i < jsonInput.length; i++){
-        color = (jsonInput[i]['hasGlare'] === "true") ? "http://maps.google.com/mapfiles/ms/icons/red-dot.png" : "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
-        console.log(i + " " + color);
+        sunsetBoolean = jsonInput[i]['glareAtSunset'] === "true";
+        sunriseBoolean = jsonInput[i]['glareAtSunrise'] === "true";
+        let message;
+        if(sunsetBoolean === "true") {
+            message = "Glare caused by sunset";
+        }
+        else if(sunriseBoolean === "true") {
+            message = "Glare caused by sunrise";
+        }
+        else {
+            message = "No glare at this point"; 
+        }
+        color = (jsonInput[i]['glareAtSunset'] === "true" || jsonInput[i]['glareAtSunrise'] === "true") ? "http://maps.google.com/mapfiles/ms/icons/red-dot.png" : "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
         marker.push(new google.maps.Marker({
            position: {lat: parseFloat(jsonInput[i]['lat']),
                 lng: parseFloat(jsonInput[i]['lng'])},
@@ -268,6 +494,6 @@ function setSunMarkers(jsonInput, marker){
                 url: color
             },
             map,
-            title: `index: ${i}, Sun Elevation: ${jsonInput[i]['elevation']}, Azimuth: ${jsonInput[i]['azimuth']}, lat: ${jsonInput[i]['lat']}, lng: ${jsonInput[i]['lng']}`}));
+            title: `lat: ${jsonInput[i]['lat']}, lng: ${jsonInput[i]['lng']}; ${message} around ${jsonInput[i]['local_time']}`}));
     }
 }
