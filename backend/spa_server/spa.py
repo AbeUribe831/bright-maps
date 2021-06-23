@@ -2,7 +2,7 @@ from threading import local
 from time import localtime
 from flask import Flask
 from flask import request
-from flask import render_template
+from flask import Response
 from flask import jsonify
 from flask import make_response
 from astral import sun, Observer
@@ -14,6 +14,7 @@ from timezonefinder import TimezoneFinder
 import datetime
 import dateutil.tz
 import pytz
+import re
 
 app = Flask(__name__)
 
@@ -92,6 +93,12 @@ def post_sun_position_same_time():
 @app.route('/demoSpaSameTime', methods=['POST'])
 def demo_post_sun_position_same_time():
     date_time = request.json
+    if  'utc_offset' not in date_time:
+        return Response('no utc_offset in request', status=401)
+    elif re.search("[+-]([01][0-9]|2[0-3])[0-5][0-9]",date_time['utc_offset']) is None:
+        return Response('utc_offset is not formated correctly, format should be (+/-)(HHMM)', status=402)
+    elif date_time['locAndTime'] is None:
+        return Response('no locAndTime in request', 410)
     sunPosArr = []
     # convert tz to seconds
     tz_hour = date_time['utc_offset']

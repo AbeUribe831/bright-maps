@@ -242,15 +242,15 @@ function initMap() {
         zoom: 8,
         mapTypeControl: false
     });
+        //componentRestrictions: {'country' : ['us']},
     fromAutocomplete = new google.maps.places.Autocomplete(document.getElementById("from"),
     {
-        componentRestrictions: {'country' : ['us']},
         fields: ['geometry', 'name', 'adr_address', 'place_id'],
         types: ['geocode', 'establishment'],
     });
+        //componentRestrictions: {'country' : ['us']},
     toAutocomplete = new google.maps.places.Autocomplete(document.getElementById("to"),
     {
-        componentRestrictions: {'country' : ['us']},
         fields: ['geometry', 'name', 'adr_address', 'place_id'],
         types: ['geocode', 'establishment'],
     });
@@ -280,8 +280,10 @@ function calcRoute(departDate) {
     let start = document.getElementById('from').value;
     let end = document.getElementById('to').value;
     let nowCheckbox = document.getElementById('current-time-checkbox');
-
-    if((start != "" && end != "") && (start != prev_from || end != prev_to || (nowCheckbox.checked == false && prev_gtd != departDate.getTime()))){
+    if((start != "" && end != "") && (start != prev_from || end != prev_to || (nowCheckbox.checked == false && prev_gtd != departDate))){
+        var currentDate = new Date()
+        console.log('departDate: ', departDate)
+        console.log('currentDate: ', currentDate)
         let request = {
             origin: start,
             destination: end,
@@ -289,11 +291,10 @@ function calcRoute(departDate) {
             drivingOptions: {
                 departureTime: departDate
             }
-        };
+        }
         directionsService.route(request, (result, status) => {
             if(status == 'OK'){
                 directionsRenderer.setDirections(result);
-                console.log(result);
 
                 // input data to send in json to backend
                 let latLngSend = [];
@@ -315,8 +316,8 @@ function calcRoute(departDate) {
                         if(currStep.distance.value < 3218){
                             interval = currStep.lat_lngs.length - 1;
                         }
-                        // interval in a per mile basis
-                        else{
+                         // interval in a per mile basis
+                         else{
                             interval = Math.floor(((currStep.lat_lngs.length * 1609) / currStep.distance.value) - 1);
                         }
                         deltaDuration += currStep.duration["value"];
@@ -383,27 +384,33 @@ function calcRoute(departDate) {
                                     };
                                     spaHttp.send(JSON.stringify(locAndTimeSend));          
                                 }
-                                // TODO:: what to do when elevation is not equal
-                                else {
-                                    console.log("elevation results does not match");
+                                    // TODO:: what to do when elevation is not equal
+                                    else {
+                                        console.log("elevation results does not match");
+                                    }
                                 }
-                            }
-                            else if(status == "INVALID_REQUEST") {
-                                console.log("Invalid Elevation request, check coordinates being sent");
-                            }
-                            else {
-                                console.log("other issue with request");
-                            }
+                                else if(status == "INVALID_REQUEST") {
+                                    console.log("Invalid Elevation request, check coordinates being sent");
+                                }
+                                else {
+                                    console.log("other issue with request");
+                                }
                         }
                     )
 
                 }
             }
+            else if(status == "INVALID_REQUEST") {
+                alert('problem with request, make sure date and time is not in the past');
+            }
+            else if(status == "ZERO_RESULTS") {
+                alert('no results occur, this app is only for driving routes, other types of routes not avaible now');
+            }
         });        
     }
     prev_from = start;
     prev_to = end;
-    prev_gtd = departDate.getTime();
+    prev_gtd = departDate;
 }
 function getValueWithZero(value){
     return value < 10 ? '0' + value : value;
@@ -477,16 +484,16 @@ function setSunMarkers(jsonInput, marker){
         sunsetBoolean = jsonInput[i]['glareAtSunset'] === "true";
         sunriseBoolean = jsonInput[i]['glareAtSunrise'] === "true";
         let message;
-        if(sunsetBoolean === "true") {
+        if(sunsetBoolean === true) {
             message = "Glare caused by sunset";
         }
-        else if(sunriseBoolean === "true") {
+        else if(sunriseBoolean === true) {
             message = "Glare caused by sunrise";
         }
         else {
             message = "No glare at this point"; 
         }
-        color = (jsonInput[i]['glareAtSunset'] === "true" || jsonInput[i]['glareAtSunrise'] === "true") ? "http://maps.google.com/mapfiles/ms/icons/red-dot.png" : "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+        color = (sunsetBoolean  || sunriseBoolean) ? "http://maps.google.com/mapfiles/ms/icons/red-dot.png" : "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
         marker.push(new google.maps.Marker({
            position: {lat: parseFloat(jsonInput[i]['lat']),
                 lng: parseFloat(jsonInput[i]['lng'])},
