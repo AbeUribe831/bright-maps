@@ -29,8 +29,6 @@
                 <div id="additional-options-wrapper">
                     <input type="checkbox" tabindex="4" id="current-time-checkbox" name="current-time" checked>
                     <label for="current-time-checkbox" class="text-with-border">Now</label>
-                    <input type="checkbox" tabindex="5" id="there-and-back-checkbox" name="there-and-back-checkbox">
-                    <label for="there-and-back-checkbox" class="text-with-border">There & Back</label>
                 </div>
                 <div id="times-input-wrapper">
                     <div id="going-there-at-wrapper" hidden>
@@ -69,47 +67,10 @@
                             </div>
                         </div>
                     </div>
-                    <div id="going-back-at-wrapper" hidden>
-                        <p class="text-underline">Going Back At</p>
-                        <div class="flex-wrapper">
-                            <div class="time-block-wrapper">
-                                <input type="number" tabindex="12" id="hour-going-back" class="time-date-border two-digit-input" name="hour-going-back" min="01" max="12" maxlength="2" value="01">
-                                <label for="hour-going-back" class="text-time">Hr</label>
-                            </div>
-                            <p class="colon">:</p>
-                            <div class="time-block-wrapper">
-                                <input type="number" tabindex="13" id="minute-going-back" class="time-date-border two-digit-input" name="minute-going-back" min="0" max="59" maxlength="2" value="01">
-                                <label for="minute-going-back" class="text-time">Min</label>
-                            </div>
-                            <div class="time-block-wrapper am-pm-margin">
-                                <select name="going-back-am-pm" tabindex="14" id="going-back-am-pm" class="am-pm">
-                                    <option value="AM">AM</option>
-                                    <option value="PM">PM</option>
-                                </select>
-                            </div>
-                        </div>                   
-                        <div class="flex-wrapper">
-                            <div class="time-block-wrapper">
-                                <input type="number" tabindex="15" id="month-going-back" class="time-date-border month-input" name="month-going-back"  min="01" max="12" maxlength="2">
-                                <label for="month-going-back" class="text-time">MM</label>
-                            </div>
-                            <p class="backslash">/</p>
-                            <div class="time-block-wrapper date-padding">
-                                <input type="number" tabindex="16" id="day-going-back" class="time-date-border two-digit-input" name="day-going-back"  min="01" maxlength="2">
-                                <label for="day-going-back" class="text-time">DD</label>
-                            </div>
-                            <p class="backslash">/</p>
-                            <div class="time-block-wrapper date-padding">
-                                <input type="number" tabindex="17" id="year-going-back" class="time-date-border year-input" year-input name="year-going-back" min="-2000" max="6000" maxlength="4" value="2021">
-                                <label for="year-going-back" class="text-time">YYYY</label>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </form>
             <div class="flex-wrapper">
                 <button type="button" tabindex="18">About</button>
-                <button type="button" tabindex="19">References</button>
             </div>
         </div>
         <script src="./listeners.js"></script>

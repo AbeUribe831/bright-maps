@@ -427,14 +427,6 @@ function setDefaultTime(){
 
     now.setMinutes(now.getMinutes() + 60);
 
-    document.getElementById("hour-going-back").value = getValueWithZero(Math.max(now.getHours(), 1) % 12);
-    document.getElementById("minute-going-back").value = getValueWithZero(now.getMinutes());    
-    document.getElementById("going-back-am-pm").value = now.getHours() > 12 ? "PM" : "AM";
-    document.getElementById("month-going-back").value = getValueWithZero(now.getMonth() + 1); 
-    document.getElementById("day-going-back").value = getValueWithZero(now.getDate());
-    document.getElementById("year-going-back").value = now.getFullYear();
-    
-
 }
 function lessThanTenString(num){
     return num < 10 ? '0' + num : num.toString();
@@ -443,8 +435,6 @@ function lessThanTenString(num){
 document.addEventListener('readystatechange', (event) => {
     if(event.target.readyState == 'interactive'){
         document.getElementById("current-time-checkbox").checked = true;
-        document.getElementById("there-and-back-checkbox").checked = false;
-        document.getElementById("going-there-at-wrapper").hidden = true;
         document.getElementById("going-there-at-wrapper").hidden = true;
         setDefaultTime();
     }

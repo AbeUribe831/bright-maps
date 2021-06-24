@@ -50,9 +50,6 @@ button[type="button"]:hover {
 select:hover {
     cursor: pointer;
 }
-#form-container {
-    padding-left: 0.3em;
-}
 #user-input-box {
     top: 0%;
     left: 0%;
@@ -60,6 +57,8 @@ select:hover {
     background-color:rgb(207, 215, 218);
     position: absolute;
     z-index: 99;
+    padding-left: 0.3em;
+    padding-bottom: 0.3em;
 }
 #directions-parent {
     display: flex;
@@ -84,9 +83,6 @@ select:hover {
     display: flex;
     height: 1.5em;
     background-color:rgb(207, 215, 218);
-}
-#there-are-back-text {
-    padding-right: 0.5em;
 }
 .am-pm {
     font-size: 0.6em;
