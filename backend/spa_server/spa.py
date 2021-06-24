@@ -36,9 +36,9 @@ def get_pressure_and_temperature(lat, lon):
     return make_response(jsonify({"message": "Request was bad"}), 400)
 '''
 
-def _time_in_seconds_is_within_an_hour(time1, time2):
-    return 'true' if abs((time1 - time2).total_seconds()) < 3600 else 'false'
-
+def _is_time_a_within_an_hour_ahead_of_time_b(time_a, time_b):
+    total_time = (time_a - time_b).total_seconds()
+    return 'true' if  total_time <= 3600 and total_time > 0 else 'false'
 # TODO:: fix case when error message is received
 def _get_pressure_and_temperature(lat, lon):
     response = requests.get(OPEN_WEATHER_CURRENT.format(lat=lat, lon=lon, API_key=API_KEY))
@@ -111,7 +111,7 @@ def demo_post_sun_position_same_time():
         localDateTime = datetime.datetime(year=int(locAndTime['date']['year']), month=int(locAndTime['date']['month']), day=int(locAndTime['date']['day']), hour=int(locAndTime['date']['hour']), minute=int(locAndTime['date']['minute']), second=int(locAndTime['date']['second']), tzinfo=dateutil.tz.tzoffset(None, tzSec))
         sunrise = sun.sunrise(observer, date=localDateTime, tzinfo=dateutil.tz.tzoffset(None, tzSec))
         sunset = sun.sunset(observer, date=localDateTime, tzinfo=dateutil.tz.tzoffset(None, tzSec))
-        sunPosArr.append({'lat': locAndTime['lat'], 'lng': locAndTime['lng'],'glareAtSunrise': _time_in_seconds_is_within_an_hour(localDateTime, sunrise), 'glareAtSunset': _time_in_seconds_is_within_an_hour(localDateTime, sunset), 'local_time': localDateTime.strftime('%c')})
+        sunPosArr.append({'lat': locAndTime['lat'], 'lng': locAndTime['lng'],'glareAtSunrise': _is_time_a_within_an_hour_ahead_of_time_b(localDateTime, sunrise), 'glareAtSunset': _is_time_a_within_an_hour_ahead_of_time_b(sunset, localDateTime), 'local_time': localDateTime.strftime('%c')})
 
         #sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(locAndTime['lat']), 'lng': str(locAndTime['lng'])})
     '''
