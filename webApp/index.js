@@ -352,14 +352,14 @@ function calcRoute(departDate) {
                                 if(elevResults.length == splicedDateSend.length) {
                                     //
                                     let locAndTimeSend = {
-                                        locAndTime: [],
+                                        loc_and_time: [],
                                         utc_offset: new Date().toString().match(/(GMT){1}[+-]{1}\d{4}/g)[0].substring(3)
                                     };
                                     console.log('spliced:',splicedDateSend);
                                     for(let i = 0; i < splicedDateSend.length; i++){
                                         let month = Math.min(splicedDateSend[i].getMonth() + 1, 12);
                                         // pass local date and time to server
-                                        locAndTimeSend.locAndTime.push({
+                                        locAndTimeSend.loc_and_time.push({
                                             lat: splicedLatLngSend[i].lat,
                                             lng: splicedLatLngSend[i].lng,
                                             elevation: elevResults[i].elevation,
@@ -373,7 +373,7 @@ function calcRoute(departDate) {
                                             }
                                         });
                                     }   
-                                    let spa_url = "http://localhost:3000/demoSpaSameTime";
+                                    let spa_url = "http://localhost:3000/demoSunriseSunset";
                                     let spaHttp = new XMLHttpRequest();
                                     spaHttp.open("POST", spa_url);
                                     spaHttp.setRequestHeader("Content-Type", "application/json");

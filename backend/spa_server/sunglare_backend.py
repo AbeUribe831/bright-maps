@@ -15,9 +15,16 @@ import datetime
 import dateutil.tz
 import pytz
 import re
+import backend_methods
 
-app = Flask(__name__)
+def create_app():
+    app = Flask(__name__)
+    #app.config.from_object(config_class)
+    return app
 
+# app = Flask(__name__)
+
+app = create_app()
 API_KEY = '6e63c47a00540c88d1241ecb9fd1be17'
 
 OPEN_WEATHER_CURRENT = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={API_key}'
@@ -35,10 +42,6 @@ def get_pressure_and_temperature(lat, lon):
         return make_response(jsonify({"temp" : str(temp), "pressure": str(pressure)}), 200)
     return make_response(jsonify({"message": "Request was bad"}), 400)
 '''
-
-def _is_time_a_within_an_hour_ahead_of_time_b(time_a, time_b):
-    total_time = (time_a - time_b).total_seconds()
-    return 'true' if  total_time <= 3600 and total_time > 0 else 'false'
 # TODO:: fix case when error message is received
 def _get_pressure_and_temperature(lat, lon):
     response = requests.get(OPEN_WEATHER_CURRENT.format(lat=lat, lon=lon, API_key=API_KEY))
@@ -71,10 +74,10 @@ def post_sun_position_date_time():
     # as a json object
     date_time = request.json
     sunPosArr = []
-    for locAndTime in date_time["locAndTime"]:
-        sol = pvlib.solarposition.get_solarposition(time=pd.DatetimeIndex([locAndTime["date"]]),
-            latitude=float(locAndTime["lat"]), longitude=float(locAndTime["lng"]), altitude=float(locAndTime["elevation"]))
-        sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(locAndTime['lat']), 'lng': str(locAndTime['lng'])})
+    for loc_and_time in date_time["loc_and_time"]:
+        sol = pvlib.solarposition.get_solarposition(time=pd.DatetimeIndex([loc_and_time["date"]]),
+            latitude=float(loc_and_time["lat"]), longitude=float(loc_and_time["lng"]), altitude=float(loc_and_time["elevation"]))
+        sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(loc_and_time['lat']), 'lng': str(loc_and_time['lng'])})
     return make_response(jsonify(sunPosArr))
 
 # used when given only one date input
@@ -89,16 +92,20 @@ def post_sun_position_same_time():
     return make_response(jsonify(sunPosArr))
 
 '''
+@app.route('/fo', methods=['GET'])
+def demo_post_fo():
+    return jsonify({'message': 'success'})
+
 # used when given only one date input
-@app.route('/demoSpaSameTime', methods=['POST'])
-def demo_post_sun_position_same_time():
+@app.route('/demoSunriseSunset', methods=['POST'])
+def demo_post_sunrise_sunset():
     date_time = request.json
     if  'utc_offset' not in date_time:
-        return Response('no utc_offset in request', status=401)
+        return Response("no utc_offset in request", status=400)
     elif re.search("[+-]([01][0-9]|2[0-3])[0-5][0-9]",date_time['utc_offset']) is None:
-        return Response('utc_offset is not formated correctly, format should be (+/-)(HHMM)', status=402)
-    elif date_time['locAndTime'] is None:
-        return Response('no locAndTime in request', 410)
+        return Response('utc_offset is not formated correctly, format should be (+/-)(HHMM)', status=400)
+    elif date_time['loc_and_time'] is None:
+        return Response('no loc_and_time in request', status=410)
     sunPosArr = []
     # convert tz to seconds
     tz_hour = date_time['utc_offset']
@@ -106,14 +113,14 @@ def demo_post_sun_position_same_time():
     tzSec = -tzSec if  tz_hour[0] == '-' else tzSec
 
     # calculation is done in local time due to UTC getting sunset on future date
-    for locAndTime in date_time["locAndTime"]:
-        observer = Observer(latitude=locAndTime['lat'], longitude=locAndTime['lng'], elevation=locAndTime['elevation'])
-        localDateTime = datetime.datetime(year=int(locAndTime['date']['year']), month=int(locAndTime['date']['month']), day=int(locAndTime['date']['day']), hour=int(locAndTime['date']['hour']), minute=int(locAndTime['date']['minute']), second=int(locAndTime['date']['second']), tzinfo=dateutil.tz.tzoffset(None, tzSec))
+    for loc_and_time in date_time["loc_and_time"]:
+        observer = Observer(latitude=loc_and_time['lat'], longitude=loc_and_time['lng'], elevation=loc_and_time['elevation'])
+        localDateTime = datetime.datetime(year=int(loc_and_time['date']['year']), month=int(loc_and_time['date']['month']), day=int(loc_and_time['date']['day']), hour=int(loc_and_time['date']['hour']), minute=int(loc_and_time['date']['minute']), second=int(loc_and_time['date']['second']), tzinfo=dateutil.tz.tzoffset(None, tzSec))
         sunrise = sun.sunrise(observer, date=localDateTime, tzinfo=dateutil.tz.tzoffset(None, tzSec))
         sunset = sun.sunset(observer, date=localDateTime, tzinfo=dateutil.tz.tzoffset(None, tzSec))
-        sunPosArr.append({'lat': locAndTime['lat'], 'lng': locAndTime['lng'],'glareAtSunrise': _is_time_a_within_an_hour_ahead_of_time_b(localDateTime, sunrise), 'glareAtSunset': _is_time_a_within_an_hour_ahead_of_time_b(sunset, localDateTime), 'local_time': localDateTime.strftime('%c')})
+        sunPosArr.append({'lat': loc_and_time['lat'], 'lng': loc_and_time['lng'],'glareAtSunrise': backend_methods._is_time_a_within_an_hour_ahead_of_time_b(localDateTime, sunrise), 'glareAtSunset': backend_methods._is_time_a_within_an_hour_ahead_of_time_b(sunset, localDateTime), 'local_time': localDateTime.strftime('%c')})
 
-        #sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(locAndTime['lat']), 'lng': str(locAndTime['lng'])})
+        #sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(loc_and_time['lat']), 'lng': str(loc_and_time['lng'])})
     '''
     Code from paper 'A novel method for predicting and mapping the presence of sun glare using Google Street View'
     with sunPosArr we can send this to the Google Street View API to get the right image then pass to 
