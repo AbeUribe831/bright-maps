@@ -18,8 +18,6 @@ def create_app():
     #app.config.from_object(config_class)
     return app
 
-# app = Flask(__name__)
-
 app = create_app()
 API_KEY = '6e63c47a00540c88d1241ecb9fd1be17'
 
