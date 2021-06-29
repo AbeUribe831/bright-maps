@@ -3,7 +3,6 @@ from backend_methods import _is_time_a_within_an_hour_ahead_of_time_b
 import datetime
 import unittest
 from sunglare_backend import app
-import pytest
 import json
 
 app.testing = True
@@ -99,7 +98,10 @@ class TestClient(unittest.TestCase):
                 '/demoSunriseSunset',
                 json=data
             )
+            resData = result.data.decode('UTF-8')
+            resData = json.loads(resData)
             self.assertEqual(result.status, '400 BAD REQUEST')
+            self.assertEqual(resData['message'], 'no utc_offset in request')
 
     def test_demo_bad_offset(self):
         with app.test_client() as client:
@@ -109,17 +111,23 @@ class TestClient(unittest.TestCase):
                 '/demoSunriseSunset',
                 json=data
             )
+            resData = result.data.decode('UTF-8')
+            resData = json.loads(resData)
             self.assertEqual(result.status, '400 BAD REQUEST')
+            self.assertEqual(resData['message'], 'utc_offset is not formatted correctly, format should be (+/-)(HHMM)')
 
     def test_demo_no_loc_and_time(self):
         with app.test_client() as client:
             # send POST data
-            data = {'loc_and_time': 'test', 'utc_offset': 'test'}
+            data = {'loc_and_time': '', 'utc_offset': '-0700'}
             result = client.post(
                 '/demoSunriseSunset',
                 json=data
             )
+            resData = result.data.decode('UTF-8')
+            resData = json.loads(resData)
             self.assertEqual(result.status, '400 BAD REQUEST')
+            self.assertEqual(resData['message'], 'no loc_and_time in request or loc_and_time is empty') 
             
     def test_demo_empty_request(self):
         with app.test_client() as client:
@@ -129,9 +137,69 @@ class TestClient(unittest.TestCase):
                 '/demoSunriseSunset',
                 json=data
             )
+            resData = result.data.decode('UTF-8')
+            resData = json.loads(resData)
             self.assertEqual(result.status, '400 BAD REQUEST')
-    
-    # two dates -> sun glare => sunrise, sunglare => sunset, no sunglare
+            self.assertEqual(resData['message'], 'no utc_offset in request')
+
+    def test_demo_bad_lat_in_loc_and_time(self):
+        with app.test_client() as client:
+            # send POST data
+            data =  \
+            {
+                "loc_and_time": [{
+                    "lat":'test', 
+                    "lng": -121.67038261904688,
+                    "elevation": 16.55,
+                    "date": {
+                        "year": "2021",
+                        "month": "6",
+                        "day": "26",
+                        "hour": "6",
+                        "minute": "0",
+                        "second": "0"
+                    }
+                }],
+                "utc_offset": "-0700"
+            }
+            result = client.post(
+                '/demoSunriseSunset',
+                json=data
+            )
+            resData = result.data.decode('UTF-8')
+            resData = json.loads(resData)
+            self.assertEqual(result.status, '400 BAD REQUEST')
+            self.assertEqual(resData['message'], 'bad loc_and_time data')
+
+    def test_demo_bad_data_in_loc_and_time(self):
+        with app.test_client() as client:
+            # send POST data
+            data =  \
+            {
+                "loc_and_time": [{
+                    "lat": 36.68083269254035, 
+                    "lng": -121.67038261904688,
+                    "elevation": 16.55,
+                    "date": {
+                        "year": "2021",
+                        "month": "36",
+                        "day": "26",
+                        "hour": "6",
+                        "minute": "0",
+                        "second": "0"
+                    }
+                }],
+                "utc_offset": "-0700"
+            }
+            result = client.post(
+                '/demoSunriseSunset',
+                json=data
+            )
+            resData = result.data.decode('UTF-8')
+            resData = json.loads(resData)
+            self.assertEqual(result.status, '400 BAD REQUEST')
+            self.assertEqual(resData['message'], 'bad loc_and_time data')
+            
     def test_demo_one_date_with_sunrise_true(self):
         with app.test_client() as client:
             # send POST data

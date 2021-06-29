@@ -7,13 +7,9 @@ from flask import jsonify
 from flask import make_response
 from astral import sun, Observer
 import json
-import pandas as pd
-import pvlib
 import requests
-from timezonefinder import TimezoneFinder
 import datetime
 import dateutil.tz
-import pytz
 import re
 import backend_methods
 
@@ -101,26 +97,28 @@ def demo_post_fo():
 def demo_post_sunrise_sunset():
     date_time = request.json
     if  'utc_offset' not in date_time:
-        return Response("no utc_offset in request", status=400)
+        return Response("{\"message\": \"no utc_offset in request\"}", status=400)
     elif re.search("[+-]([01][0-9]|2[0-3])[0-5][0-9]",date_time['utc_offset']) is None:
-        return Response('utc_offset is not formated correctly, format should be (+/-)(HHMM)', status=400)
-    elif date_time['loc_and_time'] is None:
-        return Response('no loc_and_time in request', status=410)
+        return Response("{\"message\": \"utc_offset is not formatted correctly, format should be (+/-)(HHMM)\"}", status=400)
+    elif date_time['loc_and_time'] is None or date_time['loc_and_time'] == '':
+        return Response("{\"message\": \"no loc_and_time in request or loc_and_time is empty\"}", status=400)
     sunPosArr = []
-    # convert tz to seconds
-    tz_hour = date_time['utc_offset']
-    tzSec = (int(tz_hour[1:3]) * 60 * 60) + (int(tz_hour[3:5]) * 60)
-    tzSec = -tzSec if  tz_hour[0] == '-' else tzSec
+    try:
+        # convert tz to seconds
+        tz_hour = date_time['utc_offset']
+        tzSec = (int(tz_hour[1:3]) * 60 * 60) + (int(tz_hour[3:5]) * 60)
+        tzSec = -tzSec if  tz_hour[0] == '-' else tzSec
+        # calculation is done in local time due to UTC getting sunset on future date
+        for loc_and_time in date_time["loc_and_time"]:
+            observer = Observer(latitude=loc_and_time['lat'], longitude=loc_and_time['lng'], elevation=loc_and_time['elevation'])
+            localDateTime = datetime.datetime(year=int(loc_and_time['date']['year']), month=int(loc_and_time['date']['month']), day=int(loc_and_time['date']['day']), hour=int(loc_and_time['date']['hour']), minute=int(loc_and_time['date']['minute']), second=int(loc_and_time['date']['second']), tzinfo=dateutil.tz.tzoffset(None, tzSec))
+            sunrise = sun.sunrise(observer, date=localDateTime, tzinfo=dateutil.tz.tzoffset(None, tzSec))
+            sunset = sun.sunset(observer, date=localDateTime, tzinfo=dateutil.tz.tzoffset(None, tzSec))
+            sunPosArr.append({'lat': loc_and_time['lat'], 'lng': loc_and_time['lng'],'glareAtSunrise': backend_methods._is_time_a_within_an_hour_ahead_of_time_b(localDateTime, sunrise), 'glareAtSunset': backend_methods._is_time_a_within_an_hour_ahead_of_time_b(sunset, localDateTime), 'local_time': localDateTime.strftime('%c')})
 
-    # calculation is done in local time due to UTC getting sunset on future date
-    for loc_and_time in date_time["loc_and_time"]:
-        observer = Observer(latitude=loc_and_time['lat'], longitude=loc_and_time['lng'], elevation=loc_and_time['elevation'])
-        localDateTime = datetime.datetime(year=int(loc_and_time['date']['year']), month=int(loc_and_time['date']['month']), day=int(loc_and_time['date']['day']), hour=int(loc_and_time['date']['hour']), minute=int(loc_and_time['date']['minute']), second=int(loc_and_time['date']['second']), tzinfo=dateutil.tz.tzoffset(None, tzSec))
-        sunrise = sun.sunrise(observer, date=localDateTime, tzinfo=dateutil.tz.tzoffset(None, tzSec))
-        sunset = sun.sunset(observer, date=localDateTime, tzinfo=dateutil.tz.tzoffset(None, tzSec))
-        sunPosArr.append({'lat': loc_and_time['lat'], 'lng': loc_and_time['lng'],'glareAtSunrise': backend_methods._is_time_a_within_an_hour_ahead_of_time_b(localDateTime, sunrise), 'glareAtSunset': backend_methods._is_time_a_within_an_hour_ahead_of_time_b(sunset, localDateTime), 'local_time': localDateTime.strftime('%c')})
-
-        #sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(loc_and_time['lat']), 'lng': str(loc_and_time['lng'])})
+            #sunPosArr.append({'elevation': str(sol['elevation'][0]) ,'azimuth': str(sol['azimuth'][0]), 'lat': str(loc_and_time['lat']), 'lng': str(loc_and_time['lng'])})
+    except ValueError:
+        return Response("{\"message\": \"bad loc_and_time data\"}", status=400) 
     '''
     Code from paper 'A novel method for predicting and mapping the presence of sun glare using Google Street View'
     with sunPosArr we can send this to the Google Street View API to get the right image then pass to 
