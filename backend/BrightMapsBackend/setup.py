@@ -13,7 +13,6 @@ setup(
         'requests',
         'datetime',
         'python-dateutil',
-        're',
         'astral'
     ]
 )
