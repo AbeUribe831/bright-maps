@@ -12,7 +12,7 @@ setup(
         'json',
         'requests',
         'datetime',
-        'dateutil.tz',
+        'python-dateutil',
         're',
         'astral'
     ]
