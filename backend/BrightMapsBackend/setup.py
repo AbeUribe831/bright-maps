@@ -9,7 +9,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask',
-        'json',
+        'simplejson',
         'requests',
         'datetime',
         'python-dateutil',
