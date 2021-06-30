@@ -9,12 +9,12 @@ setup(
     zip_safe=False,
     install_requires=[
         'flask',
-        'astral',
         'json',
         'requests',
         'datetime',
         'dateutil.tz',
         're',
-        'backend_methods'
+        'backend_methods',
+        'astral'
     ]
 )
