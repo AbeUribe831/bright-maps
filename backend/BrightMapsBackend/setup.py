@@ -14,7 +14,6 @@ setup(
         'datetime',
         'dateutil.tz',
         're',
-        'backend_methods',
         'astral'
     ]
 )
