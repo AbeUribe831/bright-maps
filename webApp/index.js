@@ -282,8 +282,6 @@ function calcRoute(departDate) {
     let nowCheckbox = document.getElementById('current-time-checkbox');
     if((start != "" && end != "") && (start != prev_from || end != prev_to || (nowCheckbox.checked == false && prev_gtd != departDate))){
         var currentDate = new Date()
-        console.log('departDate: ', departDate)
-        console.log('currentDate: ', currentDate)
         let request = {
             origin: start,
             destination: end,
@@ -333,8 +331,6 @@ function calcRoute(departDate) {
                         }
                     }
                 }
-                console.log(latLngSend);
-                console.log(dateSend);
                 // Send packet in intervals of 500 latlng points
                 // TODO:: deal with long distances like Salinas, CA to Austin, this will exceed to query limit
                 while(latLngSend.length != 0){
@@ -355,7 +351,6 @@ function calcRoute(departDate) {
                                         loc_and_time: [],
                                         utc_offset: new Date().toString().match(/(GMT){1}[+-]{1}\d{4}/g)[0].substring(3)
                                     };
-                                    console.log('spliced:',splicedDateSend);
                                     for(let i = 0; i < splicedDateSend.length; i++){
                                         let month = Math.min(splicedDateSend[i].getMonth() + 1, 12);
                                         // pass local date and time to server
@@ -373,12 +368,11 @@ function calcRoute(departDate) {
                                             }
                                         });
                                     }   
-                                    let spa_url = "http://localhost:3000/demoSunriseSunset";
+                                    let spa_url = "http://ec2-18-144-44-178.us-west-1.compute.amazonaws.com/demoSunriseSunset";
                                     let spaHttp = new XMLHttpRequest();
                                     spaHttp.open("POST", spa_url);
                                     spaHttp.setRequestHeader("Content-Type", "application/json");
                                     // what to do when request is done
-                                    console.log('locAndTimeSend', locAndTimeSend);
                                     spaHttp.onload = ()=>{
                                         setSunMarkers(JSON.parse(spaHttp.responseText), sunMarkers);  
                                     };
@@ -468,8 +462,6 @@ function clearMarkers() {
     }
 }
 function setSunMarkers(jsonInput, marker){
-    console.log("set markers");
-    console.log(jsonInput);
     for(let i = 0; i < jsonInput.length; i++){
         sunsetBoolean = jsonInput[i]['glareAtSunset'] === "true";
         sunriseBoolean = jsonInput[i]['glareAtSunrise'] === "true";
@@ -484,6 +476,7 @@ function setSunMarkers(jsonInput, marker){
             message = "No glare at this point"; 
         }
         color = (sunsetBoolean  || sunriseBoolean) ? "http://maps.google.com/mapfiles/ms/icons/red-dot.png" : "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+        let timestamp = new Date(jsonInput[i]['local_time']);
         marker.push(new google.maps.Marker({
            position: {lat: parseFloat(jsonInput[i]['lat']),
                 lng: parseFloat(jsonInput[i]['lng'])},
@@ -491,6 +484,7 @@ function setSunMarkers(jsonInput, marker){
                 url: color
             },
             map,
-            title: `lat: ${jsonInput[i]['lat']}, lng: ${jsonInput[i]['lng']}; ${message} around ${jsonInput[i]['local_time']}`}));
+            title: `lat: ${parseFloat(jsonInput[i]['lat']).toFixed(2)}, lng: ${parseFloat(jsonInput[i]['lng']).toFixed(2)}\n${message} around ${timestamp.getHours().toString().length == 1 ? '0' + timestamp.getHours() : timestamp.getHours()}:${timestamp.getMinutes().toString().length == 1 ? '0' + timestamp.getMinutes() : timestamp.getMinutes()}`
+        }));
     }
 }
