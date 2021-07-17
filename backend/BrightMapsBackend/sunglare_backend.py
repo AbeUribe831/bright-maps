@@ -3,6 +3,7 @@ from flask import request
 from flask import Response
 from flask import jsonify
 from flask import make_response
+from flask_cors import CORS, cross_origin
 from astral import sun, Observer
 import json
 import requests
@@ -17,9 +18,11 @@ def create_app():
     return app
 
 app = create_app()
-API_KEY = '6e63c47a00540c88d1241ecb9fd1be17'
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
-OPEN_WEATHER_CURRENT = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={API_key}'
+# add api key if needed later for using weather api
+#OPEN_WEATHER_CURRENT = 'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=metric&appid={API_key}'
 
 '''
 @app.route('/weather/<lat>/<lon>', methods=["GET"])
@@ -35,6 +38,7 @@ def get_pressure_and_temperature(lat, lon):
     return make_response(jsonify({"message": "Request was bad"}), 400)
 '''
 # TODO:: fix case when error message is received
+'''
 def _get_pressure_and_temperature(lat, lon):
     response = requests.get(OPEN_WEATHER_CURRENT.format(lat=lat, lon=lon, API_key=API_KEY))
     if(response.ok):
@@ -45,6 +49,7 @@ def _get_pressure_and_temperature(lat, lon):
         print(temp, pressure)
         return {"temp" : temp, "pressure": pressure}
     return make_response(jsonify({"message": "Request was bad"}), 400)
+'''
 # Definelty need a better way to route all this data but this should allow js app to get sun's position
 '''
 @app.route('/spa/<date>/<time>/<lat>/<lon>/<elev>')
@@ -135,4 +140,4 @@ def demo_post_sunrise_sunset():
         tempBool = not tempBool
     '''
     return make_response(jsonify(sunPosArr))
-app.run(host='127.0.0.1', port=3000)
+app.run(host='0.0.0.0', port=3000)
