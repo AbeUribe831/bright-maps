@@ -140,4 +140,5 @@ def demo_post_sunrise_sunset():
         tempBool = not tempBool
     '''
     return make_response(jsonify(sunPosArr))
-app.run(host='0.0.0.0', port=3000)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=3000)
