@@ -433,7 +433,9 @@ document.addEventListener('readystatechange', (event) => {
 });
 
 function flipHoverOn() {
-    document.getElementById("flip").src = "images/clicked-arrows.png";
+    if((window.matchMedia("(orientation: portrait)").matches && window.innerWidth < 560) || window.matchMedia("(orientation: landscape)").matches){
+        document.getElementById("flip").src = "images/clicked-arrows.png";
+    }
 }
 
 function flipHoverOff() {
