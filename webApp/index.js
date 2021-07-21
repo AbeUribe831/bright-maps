@@ -300,7 +300,6 @@ function calcRoute(departDate) {
 
                 let deltaDuration = 0;
                 // if the status is okay then clear the markers and add new ones to the map
-                // TODO:: adjust to multiple routes once implemented
                 // doing every other node
                 clearMarkers();
                 // Assuming only best route first (result.routes[0])
@@ -332,7 +331,6 @@ function calcRoute(departDate) {
                     }
                 }
                 // Send packet in intervals of 500 latlng points
-                // TODO:: deal with long distances like Salinas, CA to Austin, this will exceed to query limit
                 while(latLngSend.length != 0){
                     let splicedLatLngSend = latLngSend.splice(0, 500);
                     let splicedDateSend = dateSend.splice(0, 500);
