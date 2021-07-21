@@ -69,8 +69,10 @@ select:hover {
     margin-bottom: 0.5em;
 }
 #flip {
-    width: 3em;
+    width: 2em;
     height: 100%;
+    padding-left: 0.1em;
+    padding-right: 0.3em;
     align-self: center;
 }
 #flip:focus {
@@ -106,42 +108,12 @@ select:hover {
     box-sizing: border-box;
     border-radius: 3%;
 }
-.arrows-wrapper {
-    display: flex;
-    justify-content: center;
-}
+
 
 .margin-from-top-div {
     margin-top: 0.5em;
 }
-.vertical-line {
-    background-color: black;
-    width: 2px;
-    height: 15px;
-}
 
-.left-shift {
-    margin-right: 5px;
-}
-.right-shift {
-    margin-left: 5px;
-}
-.arrow {
-    position: absolute;
-    border: solid black;
-    border-width: 0 2px 2px 0;
-    padding: 3px;
-}
-.top {
-    vertical-align: top;
-    transform: rotate(225deg);
-    margin-right: 13px;
-}
-.bottom {
-    transform: rotate(45deg);
-    margin-left: 12px;
-    margin-top: 8px;
-}
 .checkbox-padding {
     padding-right: 0.3em;
 }
