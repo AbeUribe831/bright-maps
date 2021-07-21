@@ -15,10 +15,10 @@
             <form id="form-container">
                 <div id="directions-parent">
                     <div id="addresses-wrapper">
-                        <input type="text" tabindex="1" id="from" class="address-dimensions" name="from" placeholder="Starting Point, from" autocomplete="street-address"><br>
-                        <input type="text" tabindex="2" id="to" class="margin-from-top-div address-dimensions"  name="to" placeholder="Ending Point, to" autocomplete="street-address">
+                        <input type="text" tabindex="1" id="from" class="address-dimensions conditional-highlight" name="from" placeholder="Starting Point, from" autocomplete="street-address"><br>
+                        <input type="text" tabindex="2" id="to" class="margin-from-top-div address-dimensions conditional-highlight"  name="to" placeholder="Ending Point, to" autocomplete="street-address">
                     </div>
-                    <image src="images/arrows.png" id="flip" tabindex="3" alt="flip to and from addresses" onmouseover="flipHoverOn()" onmouseout="flipHoverOff()"/>
+                    <image src="images/arrows.png" class="conditional-highlight" id="flip" tabindex="3" alt="flip to and from addresses" onmouseover="flipHoverOn()" onmouseout="flipHoverOff()"/>
                 </div>
                 <div id="additional-options-wrapper">
                     <input type="checkbox" tabindex="4" id="current-time-checkbox" name="current-time" checked>
@@ -29,12 +29,12 @@
                         <p class="text-underline">Going There At</p>
                         <div class="flex-wrapper">
                             <div class="time-block-wrapper">
-                                <input type="number" tabindex="6" id="hour-going-there" class="time-date-border two-digit-input" name="hour-going-there" min="01" max="12" maxlength="2" value="01">
+                                <input type="number" tabindex="6" id="hour-going-there" class="time-date-border two-digit-input conditional-highlight" name="hour-going-there" min="01" max="12" maxlength="2" value="01">
                                 <label for="hour-going-there" class="text-time">Hr</label>
                             </div>
                             <p class="colon">:</p>
                             <div class="time-block-wrapper">
-                                <input type="number"  tabindex="7" id="minute-going-there" class="time-date-border two-digit-input" name="minute-going-there" min="0" max="59" maxlength="2" value="01">
+                                <input type="number"  tabindex="7" id="minute-going-there" class="time-date-border two-digit-input conditional-highlight" name="minute-going-there" min="0" max="59" maxlength="2" value="01">
                                 <label for="minute-going-there" class="text-time">Min</label>
                             </div>
                             <div class="time-block-wrapper am-pm-margin">
@@ -46,17 +46,17 @@
                         </div>
                         <div class="flex-wrapper">
                             <div class="time-block-wrapper">
-                                <input type="number" tabindex="9" id="month-going-there" class="time-date-border month-input" name="month-going-there"  min="01" max="12" maxlength="2">
+                                <input type="number" tabindex="9" id="month-going-there" class="time-date-border month-input conditional-highlight" name="month-going-there"  min="01" max="12" maxlength="2">
                                 <label for="month-going-there" class="text-time">MM</label>
                             </div>
                             <p class="backslash">/</p>
                             <div class="time-block-wrapper date-padding">
-                                <input type="number" tabindex="10" id="day-going-there" class="time-date-border two-digit-input" name="day-going-there" min="01" maxlength="2">
+                                <input type="number" tabindex="10" id="day-going-there" class="time-date-border two-digit-input conditional-highlight" name="day-going-there" min="01" maxlength="2">
                                 <label for="day-going-there" class="text-time">DD</label>
                             </div>
                             <p class="backslash">/</p>
                             <div class="time-block-wrapper date-padding">
-                                <input type="number" tabindex="11" id="year-going-there" class="time-date-border year-input" name="year-going-there" min="-2000" max="6000" maxlength="4" value="2021">
+                                <input type="number" tabindex="11" id="year-going-there" class="time-date-border year-input conditional-highlight" name="year-going-there" min="-2000" max="6000" maxlength="4" value="2021">
                                 <label for="year-going-there" class="text-time">YYYY</label>
                             </div>
                         </div>

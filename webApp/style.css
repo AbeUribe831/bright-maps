@@ -19,8 +19,9 @@ input[type="text"] {
     border-bottom-style: none;
     align-self: center;
 }
-input[type="text"]:focus {
-    outline-color: rgb(24, 90, 189);
+.conditional-highlight {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    outline: transparent;
 }
 
 input[type="number"] {
@@ -75,9 +76,7 @@ select:hover {
     padding-right: 0.3em;
     align-self: center;
 }
-#flip:focus {
-    outline:auto;
-}
+
 #flip:hover {
     cursor:pointer;
 }
@@ -173,6 +172,14 @@ select:hover {
  .year-input {
     width: 2.5em;
  }
+
+@media (max-width:560px) and (orientation: portrait), (orientation: landscape) {
+    .conditional-highlight:focus {
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+        outline: transparent;
+
+    }
+}
 @media (min-width: 560px) {
     #user-input-box {
         width: 360px;
@@ -180,17 +187,7 @@ select:hover {
         margin-left: 5px;
         border-radius: 5%;
     }
-}
-@media (min-width: 532px) and (max-width: 727px) {
-     .top{
-        margin-right: 12px;
-     }
-     .bottom{
-         margin-left: 12px;
-     }
- }
-@media(min-width: 728px) {
-    .top{
-        margin-right: 11px;
+    .conditional-highlight:focus {
+        outline: auto;
     }
 }
