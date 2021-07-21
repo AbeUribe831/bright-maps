@@ -19,11 +19,6 @@ input[type="text"] {
     border-bottom-style: none;
     align-self: center;
 }
-.conditional-highlight {
-    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-    outline: transparent;
-}
-
 input[type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
@@ -95,6 +90,10 @@ select:hover {
     height: 2em;
     width: 2.2em;
 }
+.conditional-highlight {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    outline: transparent;
+}
 #times-input-wrapper {
     display: flex;
 }
@@ -117,8 +116,7 @@ select:hover {
     padding-right: 0.3em;
 }
 /* increase font-size to small after 360px horizontal width */
-.text-with-border {
-    font-size: 11px;
+.checkbox-text {
     align-self: center;
 }
 .text-underline {
@@ -181,6 +179,13 @@ select:hover {
     input[type="text"] {
         height: 30px;
     }
+    input[type="checkbox"] {
+        transform: scale(1.5);
+    }
+    .checkbox-text {
+        font-size: 15px;
+        padding-left: 0.3em;
+    }
 }
 @media (min-width: 560px) {
     #user-input-box {
@@ -194,5 +199,12 @@ select:hover {
     }
     input[type="text"] {
         height: 15px;
+    }
+    input[type="checkbox"] {
+        transform: scale(1);
+    }
+    .checkbox-text {
+        font-size: 13px;
+        padding-left: 0;
     }
 }
