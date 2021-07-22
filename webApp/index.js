@@ -366,7 +366,7 @@ function calcRoute(departDate) {
                                             }
                                         });
                                     }   
-                                    let spa_url = "http://ec2-18-144-44-178.us-west-1.compute.amazonaws.com/demoSunriseSunset";
+                                    let spa_url = "https://api.brightmapsnav.com/demoSunriseSunset";
                                     let spaHttp = new XMLHttpRequest();
                                     spaHttp.open("POST", spa_url);
                                     spaHttp.setRequestHeader("Content-Type", "application/json");
@@ -460,7 +460,7 @@ function setSunMarkers(jsonInput, marker){
         else {
             message = "No glare at this point"; 
         }
-        color = (sunsetBoolean  || sunriseBoolean) ? "http://maps.google.com/mapfiles/ms/icons/red-dot.png" : "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+        color = (sunsetBoolean  || sunriseBoolean) ? "https://maps.google.com/mapfiles/ms/icons/red-dot.png" : "https://maps.google.com/mapfiles/ms/icons/green-dot.png";
         let timestamp = new Date(jsonInput[i]['local_time']);
         marker.push(new google.maps.Marker({
            position: {lat: parseFloat(jsonInput[i]['lat']),
